@@ -142,8 +142,8 @@ export default async function AutoDetalle({
               </ul>
             </div>
 
-            <a
-              href={`https://wa.me/5493510000000?text=Hola,%20quiero%20consultar%20por%20el%20${auto.marca}%20${auto.modelo}%20${auto.anio}`}
+ href={`https://wa.me/5493572532725?text=Hola,%20quiero%20consultar%20por%20el%20${auto.marca}%20${auto.modelo}%20${auto.anio}`}            <a
+             
               target="_blank"
               className="mt-8 inline-block w-full rounded-full bg-green-600 px-6 py-4 text-center text-lg font-bold hover:bg-green-700"
             >
