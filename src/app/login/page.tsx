@@ -17,7 +17,8 @@ export default function LoginPage() {
     });
 
     if (error) {
-      alert("Email o contraseña incorrectos");
+      alert(error.message);
+      console.log(error);
       return;
     }
 
