@@ -142,13 +142,16 @@ export default async function AutoDetalle({
               </ul>
             </div>
 
- href={`https://wa.me/5493572532725?text=Hola,%20quiero%20consultar%20por%20el%20${auto.marca}%20${auto.modelo}%20${auto.anio}`}            <a
-             
-              target="_blank"
-              className="mt-8 inline-block w-full rounded-full bg-green-600 px-6 py-4 text-center text-lg font-bold hover:bg-green-700"
-            >
-              Consultar por WhatsApp
-            </a>
+<a
+  href={`https://wa.me/5493572532725?text=${encodeURIComponent(
+    `Hola! Estoy viendo el ${auto.marca} ${auto.modelo} ${auto.anio} (${auto.km}) por ${auto.precio}. ¿Sigue disponible?`
+  )}`}
+  target="_blank"
+  rel="noopener noreferrer"
+  className="mt-8 inline-block w-full rounded-full bg-green-600 px-6 py-4 text-center text-lg font-bold hover:bg-green-700"
+>
+  Consultar por WhatsApp
+</a>
           </div>
         </div>
 
