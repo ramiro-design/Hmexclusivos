@@ -295,19 +295,23 @@ export default function AdminPage() {
                       className="h-36 w-full object-cover"
                     />
 
-                    {index === 0 && (
-                      <span className="absolute left-3 top-3 rounded-full bg-red-600 px-3 py-1 text-xs font-bold">
-                        Principal
-                      </span>
-                    )}
+                    <div className="absolute left-3 right-3 top-3 flex items-center justify-between gap-2">
+  {index === 0 ? (
+    <span className="rounded-full bg-red-600 px-3 py-1 text-xs font-bold">
+      Principal
+    </span>
+  ) : (
+    <span />
+  )}
 
-                    <button
-                      type="button"
-                      onClick={() => quitarImagen(index)}
-                      className="absolute right-3 top-3 rounded-full bg-black/70 px-3 py-1 text-xs font-bold hover:bg-red-600"
-                    >
-                      Quitar
-                    </button>
+  <button
+    type="button"
+    onClick={() => quitarImagen(index)}
+    className="rounded-full bg-black/80 px-3 py-1 text-xs font-bold transition hover:bg-red-600"
+  >
+    Quitar
+  </button>
+</div>
                   </div>
                 ))}
               </div>
