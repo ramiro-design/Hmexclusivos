@@ -1,65 +1,368 @@
-import Image from "next/image";
+"use client";
+
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import Navbar from "@/components/Navbar";
+import { autos as autosBase } from "@/data/autos";
+import { supabase } from "@/lib/supabase";
 
 export default function Home() {
+  const searchParams = useSearchParams();
+
+  const [autosDB, setAutosDB] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAutos = async () => {
+      const { data, error } = await supabase
+        .from("autos")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (!error && data) {
+        const autosFormateados = data.map((auto) => ({
+          id: `db-${auto.id}`,
+          marca: auto.marca,
+          modelo: auto.modelo,
+          anio: auto.anio,
+          kmNumero: auto.km_numero,
+          km: auto.km,
+          condicion: auto.condicion,
+          precio: auto.precio,
+          precioNumero: auto.precio_numero,
+          combustible: auto.combustible,
+          transmision: auto.transmision,
+          imagen: auto.imagen,
+          imagenes: auto.imagenes,
+          descripcion: auto.descripcion,
+        }));
+
+        setAutosDB(autosFormateados);
+      }
+
+      setLoading(false);
+    };
+
+    fetchAutos();
+  }, []);
+
+  const autosBaseFormateados = autosBase.map((auto) => ({
+    ...auto,
+    id: `base-${auto.id}`,
+  }));
+
+  const todosLosAutos = [...autosDB, ...autosBaseFormateados];
+
+  const search = searchParams.get("search") || "";
+  const marca = searchParams.get("marca") || "Todas";
+  const modelo = searchParams.get("modelo") || "Todos";
+  const condicion = searchParams.get("condicion") || "Todas";
+  const kmMax = Number(searchParams.get("kmMax") || 999999);
+  const anioMin = Number(searchParams.get("anioMin") || 0);
+  const orden = searchParams.get("orden") || "default";
+
+  const autosFiltrados = todosLosAutos.filter((auto) => {
+    const coincideBusqueda = `${auto.marca} ${auto.modelo}`
+      .toLowerCase()
+      .includes(search.toLowerCase());
+
+    return (
+      coincideBusqueda &&
+      (marca === "Todas" || auto.marca === marca) &&
+      (modelo === "Todos" || auto.modelo === modelo) &&
+      (condicion === "Todas" || auto.condicion === condicion) &&
+      auto.kmNumero <= kmMax &&
+      auto.anio >= anioMin
+    );
+  });
+
+  const autosOrdenados = [...autosFiltrados].sort((a, b) => {
+    if (orden === "precio-asc") {
+      return a.precioNumero - b.precioNumero;
+    }
+
+    if (orden === "precio-desc") {
+      return b.precioNumero - a.precioNumero;
+    }
+
+    return 0;
+  });
+
+  const actualizarFiltro = (key: string, value: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (
+      value === "Todas" ||
+      value === "Todos" ||
+      value === "0" ||
+      value === "999999" ||
+      value === "default"
+    ) {
+      params.delete(key);
+    } else {
+      params.set(key, value);
+    }
+
+    window.history.pushState(null, "", `/?${params.toString()}#autos`);
+  };
+
+  const limpiarFiltros = () => {
+    window.location.href = "/#autos";
+  };
+
+  const marcas = ["Todas", ...new Set(todosLosAutos.map((auto) => auto.marca))];
+
+  const modelos = [
+    "Todos",
+    ...new Set(todosLosAutos.map((auto) => auto.modelo)),
+  ];
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <main className="min-h-screen bg-neutral-950 text-white">
+      <Navbar />
+
+      {/* HERO */}
+      <section className="relative flex min-h-screen items-center overflow-hidden px-6 pt-24">
+        <div className="absolute inset-0 bg-[url('/agencia.jpg')] bg-cover bg-center opacity-80" />
+        <div className="absolute inset-0 bg-black/50" />
+
+        <div className="relative z-10 mx-auto max-w-6xl">
+          <p className="mb-4 text-sm uppercase tracking-[0.35em] text-red-500">
+            COLECCIÓN EXCLUSIVA
           </p>
+
+          <h1 className="max-w-3xl text-5xl font-bold tracking-tight md:text-7xl">
+           Subite hoy al auto que siempre quisiste
+          </h1>
+
+          <p className="mt-6 max-w-xl text-lg text-neutral-300">
+            Vehículos seleccionados bajo estándares de calidad, diseño y confianza.
+            Te acompañamos en todo el proceso, de forma simple y transparente.
+          </p>
+
+          <div className="mt-10 flex flex-wrap gap-4">
+            <a
+              href="#autos"
+              className="rounded-full bg-red-600 px-7 py-3 font-semibold transition hover:bg-red-700"
+            >
+              Ver stock
+            </a>
+
+            <a
+              href="#beneficios"
+              className="rounded-full border border-white/20 px-7 py-3 font-semibold transition hover:bg-white hover:text-black"
+            >
+              Por qué elegirnos
+            </a>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+      </section>
+
+      {/* BENEFICIOS */}
+      <section id="beneficios" className="mx-auto max-w-6xl px-6 py-24">
+        <p className="mb-3 text-sm uppercase tracking-[0.3em] text-red-500">
+          Confianza y experiencia
+        </p>
+
+        <h2 className="mb-10 text-4xl font-bold">
+          Una compra simple, segura y transparente
+        </h2>
+
+        <div className="grid gap-6 md:grid-cols-3">
+          <div className="rounded-2xl border border-white/10 bg-neutral-900 p-6">
+            <h3 className="text-xl font-semibold">Usados seleccionados</h3>
+            <p className="mt-3 text-neutral-400">
+              Cada unidad se revisa antes de ser publicada para ofrecer autos en
+              excelente estado.
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-neutral-900 p-6">
+            <h3 className="text-xl font-semibold">Financiación</h3>
+            <p className="mt-3 text-neutral-400">
+              Te ayudamos a encontrar una alternativa de pago que se adapte a tu
+              presupuesto.
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-neutral-900 p-6">
+            <h3 className="text-xl font-semibold">Tomamos permutas</h3>
+            <p className="mt-3 text-neutral-400">
+              Podés entregar tu vehículo como parte de pago y simplificar la
+              operación.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* AUTOS */}
+      <section id="autos" className="mx-auto max-w-6xl px-6 pb-24">
+        <div className="mb-10">
+          <p className="mb-3 text-sm uppercase tracking-[0.3em] text-red-500">
+            Stock disponible
+          </p>
+
+          <h2 className="text-4xl font-bold">Autos destacados</h2>
+        </div>
+
+        <div className="mb-10 grid gap-4 rounded-3xl border border-white/10 bg-neutral-900 p-5 md:grid-cols-3">
+          <select
+            value={marca}
+            onChange={(e) => actualizarFiltro("marca", e.target.value)}
+            className="rounded-xl border border-white/10 bg-black px-4 py-3 text-white"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            {marcas.map((marca) => (
+              <option key={marca}>{marca}</option>
+            ))}
+          </select>
+
+          <select
+            value={modelo}
+            onChange={(e) => actualizarFiltro("modelo", e.target.value)}
+            className="rounded-xl border border-white/10 bg-black px-4 py-3 text-white"
           >
-            Documentation
+            {modelos.map((modelo) => (
+              <option key={modelo}>{modelo}</option>
+            ))}
+          </select>
+
+          <select
+            value={condicion}
+            onChange={(e) => actualizarFiltro("condicion", e.target.value)}
+            className="rounded-xl border border-white/10 bg-black px-4 py-3 text-white"
+          >
+            <option>Todas</option>
+            <option>Nuevo</option>
+            <option>Usado</option>
+          </select>
+
+          <select
+            value={String(kmMax)}
+            onChange={(e) => actualizarFiltro("kmMax", e.target.value)}
+            className="rounded-xl border border-white/10 bg-black px-4 py-3 text-white"
+          >
+            <option value="999999">Todos los km</option>
+            <option value="0">0 km</option>
+            <option value="30000">Hasta 30.000 km</option>
+            <option value="60000">Hasta 60.000 km</option>
+            <option value="100000">Hasta 100.000 km</option>
+          </select>
+
+          <select
+            value={String(anioMin)}
+            onChange={(e) => actualizarFiltro("anioMin", e.target.value)}
+            className="rounded-xl border border-white/10 bg-black px-4 py-3 text-white"
+          >
+            <option value="0">Todos los años</option>
+            <option value="2024">2024 en adelante</option>
+            <option value="2023">2023 en adelante</option>
+            <option value="2022">2022 en adelante</option>
+            <option value="2021">2021 en adelante</option>
+          </select>
+
+          <select
+            value={orden}
+            onChange={(e) => actualizarFiltro("orden", e.target.value)}
+            className="rounded-xl border border-white/10 bg-black px-4 py-3 text-white"
+          >
+            <option value="default">Ordenar por precio</option>
+            <option value="precio-asc">Precio: menor a mayor</option>
+            <option value="precio-desc">Precio: mayor a menor</option>
+          </select>
+
+          <button
+            onClick={limpiarFiltros}
+            className="rounded-xl border border-white/20 px-4 py-3 font-semibold transition hover:bg-white hover:text-black md:col-span-3"
+          >
+            Limpiar filtros
+          </button>
+        </div>
+
+        <p className="mb-6 text-sm text-neutral-400">
+          {loading
+            ? "Cargando autos..."
+            : `${autosOrdenados.length} auto(s) encontrados`}
+        </p>
+
+        <div className="grid gap-6 md:grid-cols-3">
+          {autosOrdenados.map((auto) => (
+            <div
+              key={`${auto.id}`}
+              className="group overflow-hidden rounded-3xl border border-white/10 bg-neutral-900 transition hover:-translate-y-2 hover:border-red-500/50"
+            >
+              <div className="overflow-hidden">
+                <img
+                  src={auto.imagen}
+                  alt={`${auto.marca} ${auto.modelo}`}
+                  className="h-56 w-full object-cover transition duration-500 group-hover:scale-110"
+                />
+              </div>
+
+              <div className="p-5">
+                <div className="mb-3 flex gap-2">
+                  <span className="rounded-full bg-red-600 px-3 py-1 text-xs font-bold">
+                    {auto.condicion}
+                  </span>
+
+                  <span className="rounded-full bg-white/10 px-3 py-1 text-xs">
+                    {auto.anio}
+                  </span>
+                </div>
+
+                <h3 className="text-2xl font-bold">
+                  {auto.marca} {auto.modelo}
+                </h3>
+
+                <p className="mt-2 text-sm text-neutral-400">{auto.km}</p>
+
+                <div className="mt-5 flex items-center justify-between">
+                  <p className="text-xl font-bold">{auto.precio}</p>
+
+                  <a
+                    href={`/autos/${auto.id}`}
+                    className="rounded-full bg-red-600 px-4 py-2 text-sm font-semibold transition hover:bg-red-700"
+                  >
+                    Ver detalle
+                  </a>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {!loading && autosOrdenados.length === 0 && (
+          <p className="mt-10 text-center text-neutral-400">
+            No encontramos autos con esos filtros.
+          </p>
+        )}
+      </section>
+
+      {/* CONTACTO */}
+      <section
+        id="contacto"
+        className="border-t border-white/10 bg-black px-6 py-20"
+      >
+        <div className="mx-auto max-w-6xl text-center">
+          <p className="mb-3 text-sm uppercase tracking-[0.3em] text-red-500">
+            Contacto
+          </p>
+
+          <h2 className="text-4xl font-bold">¿Querés consultar por un auto?</h2>
+
+          <p className="mx-auto mt-4 max-w-xl text-neutral-400">
+            Escribinos y te asesoramos para encontrar la mejor opción según lo
+            que estás buscando.
+          </p>
+
+          <a
+            href="https://wa.me/5493510000000"
+            target="_blank"
+            className="mt-8 inline-block rounded-full bg-green-600 px-8 py-4 font-bold transition hover:bg-green-700"
+          >
+            Hablar por WhatsApp
           </a>
         </div>
-      </main>
-    </div>
+      </section>
+    </main>
   );
 }
