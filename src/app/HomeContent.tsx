@@ -353,7 +353,7 @@ export default function HomeContent() {
             target="_blank"
             className="mt-8 inline-block rounded-full bg-green-600 px-8 py-4 font-bold transition hover:bg-green-700"
           >
-            Hablar por WhatsApp nuevo
+            Hablar por WhatsApp
           </a>
         </div>
       </section>
