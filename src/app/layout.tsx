@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Script from "next/script"; // 👈 agregado
+import Script from "next/script";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -17,16 +17,21 @@ export const metadata: Metadata = {
   title: "HM Exclusivos | Autos Premium en Córdoba",
   description:
     "Compra y venta de autos premium en Córdoba. Vehículos seleccionados, financiación y asesoramiento personalizado.",
+  icons: {
+    icon: "/icon.png",
+    shortcut: "/icon.png",
+    apple: "/apple-icon.png",
+  },
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html
-      lang="es" // 👈 mejor para SEO
+      lang="es"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
