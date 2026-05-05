@@ -1,6 +1,5 @@
 import AutoGallery from "@/components/AutoGallery";
 import Navbar from "@/components/Navbar";
-import { autos } from "@/data/autos";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -13,11 +12,6 @@ export default async function AutoDetalle({
   const { id } = await params;
 
   let auto: any = null;
-
-  if (id.startsWith("base-")) {
-    const baseId = Number(id.replace("base-", ""));
-    auto = autos.find((item) => item.id === baseId);
-  }
 
   if (id.startsWith("db-")) {
     const dbId = Number(id.replace("db-", ""));
@@ -52,13 +46,28 @@ export default async function AutoDetalle({
     notFound();
   }
 
-  const autosBaseFormateados = autos.map((item) => ({
-    ...item,
-    id: `base-${item.id}`,
-  }));
+  const { data: autosDB } = await supabase
+    .from("autos")
+    .select("*")
+    .neq("id", Number(id.replace("db-", "")));
 
-  const autosSimilares = autosBaseFormateados
-    .filter((item) => item.id !== auto.id)
+  const autosSimilares = (autosDB || [])
+    .map((item) => ({
+      id: `db-${item.id}`,
+      marca: item.marca,
+      modelo: item.modelo,
+      anio: item.anio,
+      kmNumero: item.km_numero,
+      km: item.km,
+      condicion: item.condicion,
+      precio: item.precio,
+      precioNumero: item.precio_numero,
+      combustible: item.combustible,
+      transmision: item.transmision,
+      imagen: item.imagen,
+      imagenes: item.imagenes,
+      descripcion: item.descripcion,
+    }))
     .sort(
       (a, b) =>
         Math.abs(a.precioNumero - auto.precioNumero) -
@@ -120,7 +129,9 @@ export default async function AutoDetalle({
 
               <div className="rounded-2xl border border-white/10 bg-neutral-900 p-5">
                 <p className="text-sm text-neutral-400">Combustible</p>
-                <p className="mt-1 text-xl font-semibold">{auto.combustible}</p>
+                <p className="mt-1 text-xl font-semibold">
+                  {auto.combustible}
+                </p>
               </div>
 
               <div className="rounded-2xl border border-white/10 bg-neutral-900 p-5">
@@ -142,16 +153,16 @@ export default async function AutoDetalle({
               </ul>
             </div>
 
-<a
-  href={`https://wa.me/5493572532725?text=${encodeURIComponent(
-    `Hola! Estoy viendo el ${auto.marca} ${auto.modelo} ${auto.anio} (${auto.km}) por ${auto.precio}. ¿Sigue disponible?`
-  )}`}
-  target="_blank"
-  rel="noopener noreferrer"
-  className="mt-8 inline-block w-full rounded-full bg-green-600 px-6 py-4 text-center text-lg font-bold hover:bg-green-700"
->
-  Consultar por WhatsApp
-</a>
+            <a
+              href={`https://wa.me/5493572532725?text=${encodeURIComponent(
+                `Hola! Estoy viendo el ${auto.marca} ${auto.modelo} ${auto.anio} (${auto.km}) por ${auto.precio}. ¿Sigue disponible?`
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-8 inline-block w-full rounded-full bg-green-600 px-6 py-4 text-center text-lg font-bold hover:bg-green-700"
+            >
+              Consultar por WhatsApp
+            </a>
           </div>
         </div>
 

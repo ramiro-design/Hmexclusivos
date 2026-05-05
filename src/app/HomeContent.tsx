@@ -3,10 +3,9 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Navbar from "@/components/Navbar";
-import { autos as autosBase } from "@/data/autos";
 import { supabase } from "@/lib/supabase";
 
-export default function Home() {
+export default function HomeContent() { 
   const searchParams = useSearchParams();
 
   const [autosDB, setAutosDB] = useState<any[]>([]);
@@ -46,12 +45,7 @@ export default function Home() {
     fetchAutos();
   }, []);
 
-  const autosBaseFormateados = autosBase.map((auto) => ({
-    ...auto,
-    id: `base-${auto.id}`,
-  }));
-
-  const todosLosAutos = [...autosDB, ...autosBaseFormateados];
+  const todosLosAutos = autosDB;
 
   const search = searchParams.get("search") || "";
   const marca = searchParams.get("marca") || "Todas";
@@ -355,7 +349,7 @@ export default function Home() {
           </p>
 
           <a
-            href="https://wa.me/5493510000000"
+            href="https://wa.me/5493572538383"
             target="_blank"
             className="mt-8 inline-block rounded-full bg-green-600 px-8 py-4 font-bold transition hover:bg-green-700"
           >
