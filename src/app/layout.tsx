@@ -14,9 +14,14 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://hmexclusivos.com.ar"),
   title: "HM Exclusivos | Autos Premium en Córdoba",
   description:
     "Compra y venta de autos premium en Córdoba. Vehículos seleccionados, financiación y asesoramiento personalizado.",
+  robots: {
+    index: true,
+    follow: true,
+  },
   icons: {
     icon: "/icon.png",
     shortcut: "/icon.png",
@@ -37,7 +42,6 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         {children}
 
-        {/* Google Analytics */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-5ZJ47YTVT3"
           strategy="afterInteractive"

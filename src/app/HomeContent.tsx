@@ -173,10 +173,10 @@ export default function HomeContent() {
           </div>
 
           <div className="rounded-2xl border border-white/10 bg-neutral-900 p-6">
-            <h3 className="text-xl font-semibold">Financiación</h3>
+            <h3 className="text-xl font-semibold">Atención personalizada </h3>
             <p className="mt-3 text-neutral-400">
-              Te ayudamos a encontrar una alternativa de pago que se adapte a tu
-              presupuesto.
+              Te acompañamos durante todo el proceso para 
+              que encuentres el vehículo ideal de forma simple y transparente.
             </p>
           </div>
 
