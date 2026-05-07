@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 export default function Navbar() {
@@ -8,19 +9,26 @@ export default function Navbar() {
   return (
     <nav className="fixed top-0 z-50 w-full px-4 pt-4">
       <div className="glass-navbar mx-auto flex max-w-7xl items-center justify-between rounded-2xl px-7 py-4">
+        
         {/* LOGO */}
-        <button
-          onClick={() => router.push("/")}
-          className="flex cursor-pointer flex-col items-center leading-none"
-          aria-label="Ir al inicio"
-        >
-          <span className="font-serif text-4xl tracking-[0.08em] text-white">
-            HM
-          </span>
-          <span className="mt-1 text-[10px] tracking-[0.55em] text-neutral-400">
-            EXCLUSIVOS
-          </span>
-        </button>
+<button
+  onClick={() => router.push("/")}
+  className="flex cursor-pointer items-center"
+  aria-label="Ir al inicio"
+>
+<div className="pl-6">
+  <div className="relative h-16 w-40 scale-200">
+    <Image
+      src="/logo-hm-este.png"
+      alt="HM Exclusivos"
+      fill
+      sizes="200px"
+      className="object-contain object-left"
+      priority
+    />
+  </div>
+</div>
+</button>
 
         {/* LINKS */}
         <div className="hidden items-center gap-14 md:flex">
