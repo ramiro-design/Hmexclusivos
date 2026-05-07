@@ -131,8 +131,7 @@ export default function HomeContent() {
           </h1>
 
           <p className="mt-6 max-w-xl text-lg text-neutral-300">
-            Vehículos seleccionados bajo estándares de calidad, diseño y confianza.
-            Te acompañamos en todo el proceso, de forma simple y transparente.
+            Unidades seleccionadas bajo estándares de calidad, estética y confianza.
           </p>
 
           <div className="mt-10 flex flex-wrap gap-4">
