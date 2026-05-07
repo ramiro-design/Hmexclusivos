@@ -127,7 +127,7 @@ export default function HomeContent() {
           </p>
 
           <h1 className="max-w-3xl text-5xl font-bold tracking-tight md:text-7xl">
-           Subite hoy al auto que siempre quisiste
+           Exclusividad, confianza y vehículos únicos
           </h1>
 
           <p className="mt-6 max-w-xl text-lg text-neutral-300">
