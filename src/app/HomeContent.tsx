@@ -6,7 +6,7 @@ import Navbar from "@/components/Navbar";
 import { supabase } from "@/lib/supabase";
 import { getAutoSlug } from "@/lib/autos";
 
-export default function HomeContent() { 
+export default function HomeContent() {
   const searchParams = useSearchParams();
 
   const [autosDB, setAutosDB] = useState<any[]>([]);
@@ -117,36 +117,28 @@ export default function HomeContent() {
       <Navbar />
 
       {/* HERO */}
-      <section className="relative flex min-h-screen items-center overflow-hidden px-6 pt-24">
-        <div className="absolute inset-0 bg-[url('/agencia.jpg')] bg-cover bg-center opacity-80" />
-        <div className="absolute inset-0 bg-black/50" />
+      <section className="hero-premium">
+        <div className="hero-glow hero-glow-one" />
+        <div className="hero-glow hero-glow-two" />
 
-        <div className="relative z-10 mx-auto max-w-6xl">
-          <p className="mb-4 text-sm uppercase tracking-[0.35em] text-red-500">
-            COLECCIÓN EXCLUSIVA
-          </p>
+        <div className="hero-content apple-fade-slide">
+          <p className="hero-eyebrow">HM EXCLUSIVOS</p>
 
-          <h1 className="max-w-3xl text-5xl font-bold tracking-tight md:text-7xl">
-           Exclusividad, confianza y vehículos únicos
+          <h1 className="hero-title">
+            Exclusividad, confianza y vehículos únicos
           </h1>
 
-          <p className="mt-6 max-w-xl text-lg text-neutral-300">
-            Unidades seleccionadas bajo estándares de calidad, estética y confianza.
+          <p className="hero-subtitle">
+            Unidades premium seleccionadas bajo estándares de calidad, estética y confianza.
           </p>
 
-          <div className="mt-10 flex flex-wrap gap-4">
-            <a
-              href="#autos"
-              className="rounded-full bg-red-600 px-7 py-3 font-semibold transition hover:bg-red-700"
-            >
-              Ver stock
+          <div className="hero-buttons">
+            <a href="#autos" className="hero-btn hero-btn-primary">
+              Ver stock →
             </a>
 
-            <a
-              href="#beneficios"
-              className="rounded-full border border-white/20 px-7 py-3 font-semibold transition hover:bg-white hover:text-black"
-            >
-              Por qué elegirnos
+            <a href="#contacto" className="hero-btn hero-btn-secondary">
+              Contactar
             </a>
           </div>
         </div>
@@ -163,7 +155,7 @@ export default function HomeContent() {
         </h2>
 
         <div className="grid gap-6 md:grid-cols-3">
-          <div className="rounded-2xl border border-white/10 bg-neutral-900 p-6">
+          <div className="premium-card rounded-2xl p-6">
             <h3 className="text-xl font-semibold">Usados seleccionados</h3>
             <p className="mt-3 text-neutral-400">
               Cada unidad se revisa antes de ser publicada para ofrecer autos en
@@ -171,15 +163,15 @@ export default function HomeContent() {
             </p>
           </div>
 
-          <div className="rounded-2xl border border-white/10 bg-neutral-900 p-6">
-            <h3 className="text-xl font-semibold">Atención personalizada </h3>
+          <div className="premium-card rounded-2xl p-6">
+            <h3 className="text-xl font-semibold">Atención personalizada</h3>
             <p className="mt-3 text-neutral-400">
-              Te acompañamos durante todo el proceso para 
-              que encuentres el vehículo ideal de forma simple y transparente.
+              Te acompañamos durante todo el proceso para que encuentres el
+              vehículo ideal de forma simple y transparente.
             </p>
           </div>
 
-          <div className="rounded-2xl border border-white/10 bg-neutral-900 p-6">
+          <div className="premium-card rounded-2xl p-6">
             <h3 className="text-xl font-semibold">Tomamos permutas</h3>
             <p className="mt-3 text-neutral-400">
               Podés entregar tu vehículo como parte de pago y simplificar la
@@ -282,13 +274,13 @@ export default function HomeContent() {
           {autosOrdenados.map((auto) => (
             <div
               key={`${auto.id}`}
-              className="group overflow-hidden rounded-3xl border border-white/10 bg-neutral-900 transition hover:-translate-y-2 hover:border-red-500/50"
+              className="premium-card group overflow-hidden rounded-3xl"
             >
               <div className="overflow-hidden">
                 <img
                   src={auto.imagen}
                   alt={`${auto.marca} ${auto.modelo} ${auto.anio} en Córdoba`}
-                  className="h-56 w-full object-cover transition duration-500 group-hover:scale-110"
+                  className="premium-image h-56 w-full object-cover"
                 />
               </div>
 
@@ -341,7 +333,9 @@ export default function HomeContent() {
             Contacto
           </p>
 
-          <h2 className="text-4xl font-bold">¿Querés consultar por un auto?</h2>
+          <h2 className="text-4xl font-bold">
+            ¿Querés consultar por un auto?
+          </h2>
 
           <p className="mx-auto mt-4 max-w-xl text-neutral-400">
             Escribinos y te asesoramos para encontrar la mejor opción según lo
