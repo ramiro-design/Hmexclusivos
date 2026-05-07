@@ -144,213 +144,272 @@ export default function HomeContent() {
         </div>
       </section>
 
-      {/* BENEFICIOS */}
-      <section id="beneficios" className="mx-auto max-w-6xl px-6 py-24">
-        <p className="mb-3 text-sm uppercase tracking-[0.3em] text-red-500">
-          Confianza y experiencia
+ {/* BENEFICIOS */}
+<section id="beneficios" className="premium-info-section">
+  <div className="premium-info-container">
+    <p className="premium-info-eyebrow">
+      CONFIANZA Y EXPERIENCIA
+    </p>
+
+    <h2 className="premium-info-title">
+      Una compra simple, segura y transparente
+    </h2>
+
+    <p className="premium-info-subtitle">
+      Vehículos seleccionados, atención personalizada y un proceso pensado para que encuentres el auto ideal.
+    </p>
+
+    <div className="premium-info-grid">
+      <div className="premium-info-card">
+        <h3>Usados seleccionados</h3>
+
+        <p>
+          Cada unidad se revisa antes de ser publicada para ofrecer autos en excelente estado.
         </p>
+      </div>
 
-        <h2 className="mb-10 text-4xl font-bold">
-          Una compra simple, segura y transparente
-        </h2>
+      <div className="premium-info-card">
+        <h3>Atención personalizada</h3>
 
-        <div className="grid gap-6 md:grid-cols-3">
-          <div className="premium-card rounded-2xl p-6">
-            <h3 className="text-xl font-semibold">Usados seleccionados</h3>
-            <p className="mt-3 text-neutral-400">
-              Cada unidad se revisa antes de ser publicada para ofrecer autos en
-              excelente estado.
-            </p>
-          </div>
-
-          <div className="premium-card rounded-2xl p-6">
-            <h3 className="text-xl font-semibold">Atención personalizada</h3>
-            <p className="mt-3 text-neutral-400">
-              Te acompañamos durante todo el proceso para que encuentres el
-              vehículo ideal de forma simple y transparente.
-            </p>
-          </div>
-
-          <div className="premium-card rounded-2xl p-6">
-            <h3 className="text-xl font-semibold">Tomamos permutas</h3>
-            <p className="mt-3 text-neutral-400">
-              Podés entregar tu vehículo como parte de pago y simplificar la
-              operación.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* AUTOS */}
-      <section id="autos" className="mx-auto max-w-6xl px-6 pb-24">
-        <div className="mb-10">
-          <p className="mb-3 text-sm uppercase tracking-[0.3em] text-red-500">
-            Stock disponible
-          </p>
-
-          <h2 className="text-4xl font-bold">Autos destacados</h2>
-        </div>
-
-        <div className="mb-10 grid gap-4 rounded-3xl border border-white/10 bg-neutral-900 p-5 md:grid-cols-3">
-          <select
-            value={marca}
-            onChange={(e) => actualizarFiltro("marca", e.target.value)}
-            className="rounded-xl border border-white/10 bg-black px-4 py-3 text-white"
-          >
-            {marcas.map((marca) => (
-              <option key={marca}>{marca}</option>
-            ))}
-          </select>
-
-          <select
-            value={modelo}
-            onChange={(e) => actualizarFiltro("modelo", e.target.value)}
-            className="rounded-xl border border-white/10 bg-black px-4 py-3 text-white"
-          >
-            {modelos.map((modelo) => (
-              <option key={modelo}>{modelo}</option>
-            ))}
-          </select>
-
-          <select
-            value={condicion}
-            onChange={(e) => actualizarFiltro("condicion", e.target.value)}
-            className="rounded-xl border border-white/10 bg-black px-4 py-3 text-white"
-          >
-            <option>Todas</option>
-            <option>Nuevo</option>
-            <option>Usado</option>
-          </select>
-
-          <select
-            value={String(kmMax)}
-            onChange={(e) => actualizarFiltro("kmMax", e.target.value)}
-            className="rounded-xl border border-white/10 bg-black px-4 py-3 text-white"
-          >
-            <option value="999999">Todos los km</option>
-            <option value="0">0 km</option>
-            <option value="30000">Hasta 30.000 km</option>
-            <option value="60000">Hasta 60.000 km</option>
-            <option value="100000">Hasta 100.000 km</option>
-          </select>
-
-          <select
-            value={String(anioMin)}
-            onChange={(e) => actualizarFiltro("anioMin", e.target.value)}
-            className="rounded-xl border border-white/10 bg-black px-4 py-3 text-white"
-          >
-            <option value="0">Todos los años</option>
-            <option value="2024">2024 en adelante</option>
-            <option value="2023">2023 en adelante</option>
-            <option value="2022">2022 en adelante</option>
-            <option value="2021">2021 en adelante</option>
-          </select>
-
-          <select
-            value={orden}
-            onChange={(e) => actualizarFiltro("orden", e.target.value)}
-            className="rounded-xl border border-white/10 bg-black px-4 py-3 text-white"
-          >
-            <option value="default">Ordenar por precio</option>
-            <option value="precio-asc">Precio: menor a mayor</option>
-            <option value="precio-desc">Precio: mayor a menor</option>
-          </select>
-
-          <button
-            onClick={limpiarFiltros}
-            className="rounded-xl border border-white/20 px-4 py-3 font-semibold transition hover:bg-white hover:text-black md:col-span-3"
-          >
-            Limpiar filtros
-          </button>
-        </div>
-
-        <p className="mb-6 text-sm text-neutral-400">
-          {loading
-            ? "Cargando autos..."
-            : `${autosOrdenados.length} auto(s) encontrados`}
+        <p>
+          Te acompañamos durante todo el proceso para que encuentres el vehículo ideal de forma simple y transparente.
         </p>
+      </div>
 
-        <div className="grid gap-6 md:grid-cols-3">
-          {autosOrdenados.map((auto) => (
-            <div
-              key={`${auto.id}`}
-              className="premium-card group overflow-hidden rounded-3xl"
-            >
-              <div className="overflow-hidden">
-                <img
-                  src={auto.imagen}
-                  alt={`${auto.marca} ${auto.modelo} ${auto.anio} en Córdoba`}
-                  className="premium-image h-56 w-full object-cover"
-                />
-              </div>
+      <div className="premium-info-card">
+        <h3>Tomamos permutas</h3>
 
-              <div className="p-5">
-                <div className="mb-3 flex gap-2">
-                  <span className="rounded-full bg-red-600 px-3 py-1 text-xs font-bold">
-                    {auto.condicion}
-                  </span>
+        <p>
+          Podés entregar tu vehículo como parte de pago y simplificar la operación.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
 
-                  <span className="rounded-full bg-white/10 px-3 py-1 text-xs">
-                    {auto.anio}
-                  </span>
-                </div>
+{/* AUTOS */}
+<section
+  id="autos"
+  className="stock-section-bg relative overflow-hidden px-6 py-24"
+>
+  <div className="mx-auto max-w-6xl">
+    <div className="mb-10">
+      <p className="mb-3 text-sm uppercase tracking-[0.3em] text-[#9db7ff]">
+        Stock disponible
+      </p>
 
-                <h3 className="text-2xl font-bold">
-                  {auto.marca} {auto.modelo}
-                </h3>
+      <h2 className="text-4xl font-bold">Autos destacados</h2>
+    </div>
 
-                <p className="mt-2 text-sm text-neutral-400">{auto.km}</p>
-
-                <div className="mt-5 flex items-center justify-between">
-                  <p className="text-xl font-bold">{auto.precio}</p>
-
-                  <a
-                    href={`/autos/${getAutoSlug(auto)}`}
-                    className="rounded-full bg-red-600 px-4 py-2 text-sm font-semibold transition hover:bg-red-700"
-                  >
-                    Ver detalle
-                  </a>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {!loading && autosOrdenados.length === 0 && (
-          <p className="mt-10 text-center text-neutral-400">
-            No encontramos autos con esos filtros.
-          </p>
-        )}
-      </section>
-
-      {/* CONTACTO */}
-      <section
-        id="contacto"
-        className="border-t border-white/10 bg-black px-6 py-20"
+    <div className="mb-10 grid gap-4 rounded-3xl border border-white/10 bg-neutral-900/70 p-5 backdrop-blur-xl md:grid-cols-3">
+      <select
+        value={marca}
+        onChange={(e) => actualizarFiltro("marca", e.target.value)}
+        className="rounded-xl border border-white/10 bg-black px-4 py-3 text-white"
       >
-        <div className="mx-auto max-w-6xl text-center">
-          <p className="mb-3 text-sm uppercase tracking-[0.3em] text-red-500">
-            Contacto
-          </p>
+        {marcas.map((marca) => (
+          <option key={marca}>{marca}</option>
+        ))}
+      </select>
 
-          <h2 className="text-4xl font-bold">
-            ¿Querés consultar por un auto?
-          </h2>
+      <select
+        value={modelo}
+        onChange={(e) => actualizarFiltro("modelo", e.target.value)}
+        className="rounded-xl border border-white/10 bg-black px-4 py-3 text-white"
+      >
+        {modelos.map((modelo) => (
+          <option key={modelo}>{modelo}</option>
+        ))}
+      </select>
 
-          <p className="mx-auto mt-4 max-w-xl text-neutral-400">
-            Escribinos y te asesoramos para encontrar la mejor opción según lo
-            que estás buscando.
-          </p>
+      <select
+        value={condicion}
+        onChange={(e) => actualizarFiltro("condicion", e.target.value)}
+        className="rounded-xl border border-white/10 bg-black px-4 py-3 text-white"
+      >
+        <option>Todas</option>
+        <option>Nuevo</option>
+        <option>Usado</option>
+      </select>
 
-          <a
-            href="https://wa.me/5493572538383"
-            target="_blank"
-            className="mt-8 inline-block rounded-full bg-green-600 px-8 py-4 font-bold transition hover:bg-green-700"
-          >
-            Hablar por WhatsApp
-          </a>
+      <select
+        value={String(kmMax)}
+        onChange={(e) => actualizarFiltro("kmMax", e.target.value)}
+        className="rounded-xl border border-white/10 bg-black px-4 py-3 text-white"
+      >
+        <option value="999999">Todos los km</option>
+        <option value="0">0 km</option>
+        <option value="30000">Hasta 30.000 km</option>
+        <option value="60000">Hasta 60.000 km</option>
+        <option value="100000">Hasta 100.000 km</option>
+      </select>
+
+      <select
+        value={String(anioMin)}
+        onChange={(e) => actualizarFiltro("anioMin", e.target.value)}
+        className="rounded-xl border border-white/10 bg-black px-4 py-3 text-white"
+      >
+        <option value="0">Todos los años</option>
+        <option value="2024">2024 en adelante</option>
+        <option value="2023">2023 en adelante</option>
+        <option value="2022">2022 en adelante</option>
+        <option value="2021">2021 en adelante</option>
+      </select>
+
+      <select
+        value={orden}
+        onChange={(e) => actualizarFiltro("orden", e.target.value)}
+        className="rounded-xl border border-white/10 bg-black px-4 py-3 text-white"
+      >
+        <option value="default">Ordenar por precio</option>
+        <option value="precio-asc">Precio: menor a mayor</option>
+        <option value="precio-desc">Precio: mayor a menor</option>
+      </select>
+
+      <button
+        onClick={limpiarFiltros}
+        className="rounded-xl border border-white/20 px-4 py-3 font-semibold transition hover:bg-white hover:text-black md:col-span-3"
+      >
+        Limpiar filtros
+      </button>
+    </div>
+
+    <p className="mb-6 text-sm text-neutral-400">
+      {loading
+        ? "Cargando autos..."
+        : `${autosOrdenados.length} auto(s) encontrados`}
+    </p>
+
+    <div className="grid gap-6 md:grid-cols-3">
+      {autosOrdenados.map((auto) => (
+        <div
+          key={`${auto.id}`}
+          className="premium-card group overflow-hidden rounded-3xl"
+        >
+          <div className="overflow-hidden">
+            <img
+              src={auto.imagen}
+              alt={`${auto.marca} ${auto.modelo} ${auto.anio} en Córdoba`}
+              className="premium-image h-56 w-full object-cover"
+            />
+          </div>
+
+          <div className="p-5">
+            <div className="mb-3 flex gap-2">
+              <span className="rounded-full bg-[#8ea8ff] px-3 py-1 text-xs font-semibold text-black">
+                {auto.condicion}
+              </span>
+
+              <span className="rounded-full bg-white/10 px-3 py-1 text-xs">
+                {auto.anio}
+              </span>
+            </div>
+
+            <h3 className="text-2xl font-bold">
+              {auto.marca} {auto.modelo}
+            </h3>
+
+            <p className="mt-2 text-sm text-neutral-400">{auto.km}</p>
+
+            <div className="mt-5 flex items-center justify-between">
+              <p className="text-xl font-bold">{auto.precio}</p>
+
+              <a
+                href={`/autos/${getAutoSlug(auto)}`}
+                className="rounded-full bg-[#8ea8ff] px-4 py-2 text-sm font-semibold text-black transition hover:bg-[#7695ff]"
+              >
+                Ver detalle
+              </a>
+            </div>
+          </div>
         </div>
-      </section>
+      ))}
+    </div>
+
+    {!loading && autosOrdenados.length === 0 && (
+      <p className="mt-10 text-center text-neutral-400">
+        No encontramos autos con esos filtros.
+      </p>
+    )}
+  </div>
+</section>
+{/* CONTACTO */}
+<section
+  id="contacto"
+  className="stock-section-bg border-t border-white/10 px-6 py-24"
+>
+  <div className="mx-auto max-w-6xl">
+    <div className="mb-12 text-center">
+      <p className="mb-3 text-sm uppercase tracking-[0.3em] text-[#9db7ff]">
+        Contacto
+      </p>
+
+      <h2 className="text-4xl font-bold">
+        ¿Querés consultar por un auto?
+      </h2>
+
+      <p className="mx-auto mt-4 max-w-2xl text-neutral-400">
+        Escribinos y te asesoramos para encontrar la mejor opción según lo que estás buscando.
+      </p>
+    </div>
+
+    <div className="grid gap-6 md:grid-cols-3">
+      <a
+        href="https://wa.me/5493572538383"
+        target="_blank"
+        className="premium-card rounded-3xl p-8 transition hover:-translate-y-1"
+      >
+        <p className="mb-3 text-sm uppercase tracking-[0.25em] text-[#9db7ff]">
+          WhatsApp
+        </p>
+
+        <h3 className="text-2xl font-bold">
+          Consultar ahora
+        </h3>
+
+        <p className="mt-4 text-neutral-400">
+          Respuesta rápida para stock, precios, financiación y permutas.
+        </p>
+      </a>
+
+      <a
+        href="https://www.instagram.com/hmexclusivos"
+        target="_blank"
+        className="premium-card rounded-3xl p-8 transition hover:-translate-y-1"
+      >
+        <p className="mb-3 text-sm uppercase tracking-[0.25em] text-[#9db7ff]">
+          Instagram
+        </p>
+
+        <h3 className="text-2xl font-bold">
+          @hmexclusivos
+        </h3>
+
+        <p className="mt-4 text-neutral-400">
+          Seguinos para ver ingresos, novedades y vehículos destacados.
+        </p>
+      </a>
+
+      <a
+        href="https://maps.google.com"
+        target="_blank"
+        className="premium-card rounded-3xl p-8 transition hover:-translate-y-1"
+      >
+        <p className="mb-3 text-sm uppercase tracking-[0.25em] text-[#9db7ff]">
+          Ubicación
+        </p>
+
+        <h3 className="text-2xl font-bold">
+          Córdoba, Argentina
+        </h3>
+
+        <p className="mt-4 text-neutral-400">
+          Coordiná una visita para conocer la unidad personalmente.
+        </p>
+      </a>
+    </div>
+  </div>
+</section>
     </main>
   );
 }
