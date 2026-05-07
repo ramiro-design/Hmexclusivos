@@ -26,16 +26,16 @@ export default function AutoGallery({
           <button
             key={imagen}
             onClick={() => setImagenSeleccionada(imagen)}
-            className={`overflow-hidden rounded-2xl border ${
+            className={`overflow-hidden rounded-2xl border-2 transition ${
               imagenSeleccionada === imagen
-                ? "border-red-500"
-                : "border-white/10"
+                ? "border-[#284973]"
+                : "border-transparent hover:border-white/20"
             }`}
           >
             <img
               src={imagen}
               alt={alt}
-              className="h-28 w-full object-cover hover:opacity-80"
+              className="h-28 w-full object-cover transition hover:opacity-80"
             />
           </button>
         ))}

@@ -102,6 +102,13 @@ export default function HomeContent() {
   const marcas = ["Todas", ...new Set(todosLosAutos.map((auto) => auto.marca))];
   const modelos = ["Todos", ...new Set(todosLosAutos.map((auto) => auto.modelo))];
 
+  const filtroBox =
+    "h-[88px] rounded-2xl border border-white/15 bg-black/25 px-5 py-4 text-left shadow-inner shadow-white/5 transition hover:border-white/25";
+  const filtroLabel =
+    "mb-1 block text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-400";
+  const filtroSelect =
+    "w-full cursor-pointer appearance-none bg-transparent text-sm font-semibold text-white outline-none";
+
   return (
     <main className="min-h-screen bg-neutral-950 text-white">
       <Navbar />
@@ -177,104 +184,109 @@ export default function HomeContent() {
         id="autos"
         className="stock-section-bg relative overflow-hidden px-6 py-24"
       >
-        <div className="mx-auto max-w-6xl">
+        <div className="mx-auto max-w-7xl">
           <div className="mb-10">
-            <p className="mb-3 text-sm uppercase tracking-[0.3em] text-[#9db7ff]">
+            <p className="mb-3 text-sm uppercase tracking-[0.3em] text-[#4f6fe8]">
               Stock disponible
             </p>
 
             <h2 className="text-4xl font-bold">Autos destacados</h2>
           </div>
 
-          {/* FILTROS */}
-          <div className="mb-10 rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 shadow-2xl shadow-black/30 backdrop-blur-xl">
-            <div className="mb-5 flex items-center justify-between gap-4">
-              <div>
-                <p className="text-xs uppercase tracking-[0.25em] text-[#9db7ff]">
-                  Filtrar búsqueda
-                </p>
-
-                <h3 className="mt-1 text-xl font-semibold text-white">
-                  Encontrá tu próximo auto
-                </h3>
+          {/* FILTROS PREMIUM */}
+          <div className="mb-10 rounded-[1.4rem] border border-white/10 bg-white/[0.035] p-5 shadow-2xl shadow-black/40 backdrop-blur-xl">
+            <div className="grid gap-4 lg:grid-cols-6">
+              <div className={filtroBox}>
+                <span className={filtroLabel}>Marca</span>
+                <select
+                  value={marca}
+                  onChange={(e) => actualizarFiltro("marca", e.target.value)}
+                  className={filtroSelect}
+                >
+                  {marcas.map((marca) => (
+                    <option key={marca}>{marca}</option>
+                  ))}
+                </select>
               </div>
 
-              <button
-                onClick={limpiarFiltros}
-                className="hidden rounded-full border border-white/15 px-5 py-2 text-sm font-semibold text-neutral-300 transition hover:bg-white hover:text-black md:block"
-              >
-                Limpiar
-              </button>
+              <div className={filtroBox}>
+                <span className={filtroLabel}>Modelo</span>
+                <select
+                  value={modelo}
+                  onChange={(e) => actualizarFiltro("modelo", e.target.value)}
+                  className={filtroSelect}
+                >
+                  {modelos.map((modelo) => (
+                    <option key={modelo}>{modelo}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className={filtroBox}>
+                <span className={filtroLabel}>Condición</span>
+                <select
+                  value={condicion}
+                  onChange={(e) => actualizarFiltro("condicion", e.target.value)}
+                  className={filtroSelect}
+                >
+                  <option>Todas</option>
+                  <option>Nuevo</option>
+                  <option>Usado</option>
+                </select>
+              </div>
+
+              <div className={filtroBox}>
+                <span className={filtroLabel}>Kilómetros</span>
+                <select
+                  value={String(kmMax)}
+                  onChange={(e) => actualizarFiltro("kmMax", e.target.value)}
+                  className={filtroSelect}
+                >
+                  <option value="999999">Todos los km</option>
+                  <option value="0">0 km</option>
+                  <option value="30000">Hasta 30.000 km</option>
+                  <option value="60000">Hasta 60.000 km</option>
+                  <option value="100000">Hasta 100.000 km</option>
+                </select>
+              </div>
+
+              <div className={filtroBox}>
+                <span className={filtroLabel}>Año</span>
+                <select
+                  value={String(anioMin)}
+                  onChange={(e) => actualizarFiltro("anioMin", e.target.value)}
+                  className={filtroSelect}
+                >
+                  <option value="0">Todos los años</option>
+                  <option value="2024">2024 en adelante</option>
+                  <option value="2023">2023 en adelante</option>
+                  <option value="2022">2022 en adelante</option>
+                  <option value="2021">2021 en adelante</option>
+                </select>
+              </div>
+
+              <div className={filtroBox}>
+                <span className={filtroLabel}>Ordenar</span>
+                <select
+                  value={orden}
+                  onChange={(e) => actualizarFiltro("orden", e.target.value)}
+                  className={filtroSelect}
+                >
+                  <option value="default">Ordenar por precio</option>
+                  <option value="precio-asc">Precio: menor a mayor</option>
+                  <option value="precio-desc">Precio: mayor a menor</option>
+                </select>
+              </div>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-3">
-              <select
-                value={marca}
-                onChange={(e) => actualizarFiltro("marca", e.target.value)}
-                className="rounded-2xl border border-white/10 bg-neutral-950 px-4 py-3 text-sm text-white outline-none transition focus:border-[#9db7ff]"
-              >
-                {marcas.map((marca) => (
-                  <option key={marca}>{marca}</option>
-                ))}
-              </select>
-
-              <select
-                value={modelo}
-                onChange={(e) => actualizarFiltro("modelo", e.target.value)}
-                className="rounded-2xl border border-white/10 bg-neutral-950 px-4 py-3 text-sm text-white outline-none transition focus:border-[#9db7ff]"
-              >
-                {modelos.map((modelo) => (
-                  <option key={modelo}>{modelo}</option>
-                ))}
-              </select>
-
-              <select
-                value={condicion}
-                onChange={(e) => actualizarFiltro("condicion", e.target.value)}
-                className="rounded-2xl border border-white/10 bg-neutral-950 px-4 py-3 text-sm text-white outline-none transition focus:border-[#9db7ff]"
-              >
-                <option>Todas</option>
-                <option>Nuevo</option>
-                <option>Usado</option>
-              </select>
-
-              <select
-                value={String(kmMax)}
-                onChange={(e) => actualizarFiltro("kmMax", e.target.value)}
-                className="rounded-2xl border border-white/10 bg-neutral-950 px-4 py-3 text-sm text-white outline-none transition focus:border-[#9db7ff]"
-              >
-                <option value="999999">Todos los km</option>
-                <option value="0">0 km</option>
-                <option value="30000">Hasta 30.000 km</option>
-                <option value="60000">Hasta 60.000 km</option>
-                <option value="100000">Hasta 100.000 km</option>
-              </select>
-
-              <select
-                value={String(anioMin)}
-                onChange={(e) => actualizarFiltro("anioMin", e.target.value)}
-                className="rounded-2xl border border-white/10 bg-neutral-950 px-4 py-3 text-sm text-white outline-none transition focus:border-[#9db7ff]"
-              >
-                <option value="0">Todos los años</option>
-                <option value="2024">2024 en adelante</option>
-                <option value="2023">2023 en adelante</option>
-                <option value="2022">2022 en adelante</option>
-                <option value="2021">2021 en adelante</option>
-              </select>
-
-              <select
-                value={orden}
-                onChange={(e) => actualizarFiltro("orden", e.target.value)}
-                className="rounded-2xl border border-white/10 bg-neutral-950 px-4 py-3 text-sm text-white outline-none transition focus:border-[#9db7ff]"
-              >
-                <option value="default">Ordenar por precio</option>
-                <option value="precio-asc">Precio: menor a mayor</option>
-                <option value="precio-desc">Precio: mayor a menor</option>
-              </select>
+            <div className="mt-5 flex flex-col gap-4 border-t border-white/10 pt-5 md:flex-row md:items-center md:justify-between">
+              <p className="text-sm text-neutral-400">
+                Filtrá por marca, modelo, año, kilómetros y precio.
+              </p>
 
               <button
                 onClick={limpiarFiltros}
-                className="rounded-2xl border border-white/15 px-4 py-3 text-sm font-semibold text-neutral-300 transition hover:bg-white hover:text-black md:hidden"
+                className="text-left text-sm font-semibold text-[#4f6fe8] transition hover:text-white md:text-right"
               >
                 Limpiar filtros
               </button>
@@ -287,13 +299,14 @@ export default function HomeContent() {
               : `${autosOrdenados.length} auto(s) encontrados`}
           </p>
 
-          <div className="grid gap-6 md:grid-cols-3">
+          {/* CARDS PREMIUM */}
+          <div className="grid gap-6 xl:grid-cols-3 md:grid-cols-2">
             {autosOrdenados.map((auto) => (
               <div
                 key={`${auto.id}`}
                 className="group overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.035] shadow-2xl shadow-black/30 transition duration-300 hover:-translate-y-1 hover:border-white/20"
               >
-                <div className="relative h-64 overflow-hidden">
+                <div className="relative h-[340px] overflow-hidden">
                   <img
                     src={auto.imagen}
                     alt={`${auto.marca} ${auto.modelo} ${auto.anio} en Córdoba`}
@@ -303,11 +316,11 @@ export default function HomeContent() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent" />
 
                   <div className="absolute bottom-4 left-4 flex gap-2">
-                    <span className="rounded-full bg-[#4f6fe8] px-3 py-1 text-xs font-bold uppercase text-black shadow-lg">
+                    <span className="rounded-lg bg-[#4f6fe8] px-3 py-1 text-xs font-bold uppercase text-white shadow-lg">
                       {auto.condicion}
                     </span>
 
-                    <span className="rounded-full border border-white/15 bg-black/50 px-3 py-1 text-xs font-semibold text-white backdrop-blur-md">
+                    <span className="rounded-lg border border-white/15 bg-black/50 px-3 py-1 text-xs font-semibold text-white backdrop-blur-md">
                       {auto.anio}
                     </span>
                   </div>
@@ -354,9 +367,9 @@ export default function HomeContent() {
         id="contacto"
         className="stock-section-bg border-t border-white/10 px-6 py-24"
       >
-        <div className="mx-auto max-w-6xl">
+        <div className="mx-auto max-w-[1600px]">
           <div className="mb-12 text-center">
-            <p className="mb-3 text-sm uppercase tracking-[0.3em] text-[#9db7ff]">
+            <p className="mb-3 text-sm uppercase tracking-[0.3em] text-[#4f6fe8]">
               Contacto
             </p>
 
@@ -375,7 +388,7 @@ export default function HomeContent() {
               target="_blank"
               className="premium-card rounded-3xl p-8 transition hover:-translate-y-1"
             >
-              <p className="mb-3 text-sm uppercase tracking-[0.25em] text-[#9db7ff]">
+              <p className="mb-3 text-sm uppercase tracking-[0.25em] text-[#4f6fe8]">
                 WhatsApp
               </p>
 
@@ -391,7 +404,7 @@ export default function HomeContent() {
               target="_blank"
               className="premium-card rounded-3xl p-8 transition hover:-translate-y-1"
             >
-              <p className="mb-3 text-sm uppercase tracking-[0.25em] text-[#9db7ff]">
+              <p className="mb-3 text-sm uppercase tracking-[0.25em] text-[#4f6fe8]">
                 Instagram
               </p>
 
@@ -407,7 +420,7 @@ export default function HomeContent() {
               target="_blank"
               className="premium-card rounded-3xl p-8 transition hover:-translate-y-1"
             >
-              <p className="mb-3 text-sm uppercase tracking-[0.25em] text-[#9db7ff]">
+              <p className="mb-3 text-sm uppercase tracking-[0.25em] text-[#4f6fe8]">
                 Ubicación
               </p>
 
