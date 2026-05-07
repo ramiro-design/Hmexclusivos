@@ -47,6 +47,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title,
     description,
+
     openGraph: {
       title,
       description,
@@ -109,8 +110,62 @@ export default async function AutoDetalle({ params }: Props) {
     )
     .slice(0, 3);
 
+  const schemaData = {
+    "@context": "https://schema.org",
+    "@type": "Car",
+
+    name: `${auto.marca} ${auto.modelo} ${auto.anio}`,
+
+    brand: {
+      "@type": "Brand",
+      name: auto.marca,
+    },
+
+    model: auto.modelo,
+
+    vehicleModelDate: String(auto.anio),
+
+    mileageFromOdometer: {
+      "@type": "QuantitativeValue",
+      value: auto.kmNumero,
+      unitCode: "KMT",
+    },
+
+    fuelType: auto.combustible,
+
+    vehicleTransmission: auto.transmision,
+
+    image: auto.imagen,
+
+    description: auto.descripcion,
+
+    offers: {
+      "@type": "Offer",
+
+      price: auto.precioNumero,
+
+      priceCurrency: "ARS",
+
+      availability: "https://schema.org/InStock",
+
+      url: `https://hmexclusivos.com.ar/autos/${getAutoSlug(auto)}`,
+
+      seller: {
+        "@type": "Organization",
+        name: "HM Exclusivos",
+      },
+    },
+  };
+
   return (
     <main className="min-h-screen bg-neutral-950 text-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(schemaData),
+        }}
+      />
+
       <Navbar />
 
       <section className="mx-auto max-w-6xl px-6 pt-32 pb-20">
