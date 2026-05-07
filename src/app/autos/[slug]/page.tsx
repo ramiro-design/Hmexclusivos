@@ -1,32 +1,38 @@
 import AutoGallery from "@/components/AutoGallery";
 import Navbar from "@/components/Navbar";
 import { supabase } from "@/lib/supabase";
+import { getAutoSlug } from "@/lib/autos";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}): Promise<Metadata> {
-  const { id } = await params;
+type Props = {
+  params: Promise<{ slug: string }>;
+};
 
-  let auto: any = null;
+function getIdFromSlug(slug: string) {
+  const parts = slug.split("-");
+  const id = parts[parts.length - 1];
+  return Number(id);
+}
 
-  if (id.startsWith("db-")) {
-    const dbId = Number(id.replace("db-", ""));
+async function getAutoBySlug(slug: string) {
+  const dbId = getIdFromSlug(slug);
 
-    const { data } = await supabase
-      .from("autos")
-      .select("*")
-      .eq("id", dbId)
-      .single();
+  if (!dbId) return null;
 
-    if (data) {
-      auto = data;
-    }
-  }
+  const { data } = await supabase
+    .from("autos")
+    .select("*")
+    .eq("id", dbId)
+    .single();
+
+  return data;
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const auto = await getAutoBySlug(slug);
 
   if (!auto) {
     return {
@@ -49,56 +55,39 @@ export async function generateMetadata({
   };
 }
 
-export default async function AutoDetalle({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
+export default async function AutoDetalle({ params }: Props) {
+  const { slug } = await params;
+  const autoDB = await getAutoBySlug(slug);
 
-  let auto: any = null;
-
-  if (id.startsWith("db-")) {
-    const dbId = Number(id.replace("db-", ""));
-
-    const { data } = await supabase
-      .from("autos")
-      .select("*")
-      .eq("id", dbId)
-      .single();
-
-    if (data) {
-      auto = {
-        id: `db-${data.id}`,
-        marca: data.marca,
-        modelo: data.modelo,
-        anio: data.anio,
-        kmNumero: data.km_numero,
-        km: data.km,
-        condicion: data.condicion,
-        precio: data.precio,
-        precioNumero: data.precio_numero,
-        combustible: data.combustible,
-        transmision: data.transmision,
-        imagen: data.imagen,
-        imagenes: data.imagenes,
-        descripcion: data.descripcion,
-      };
-    }
-  }
-
-  if (!auto) {
+  if (!autoDB) {
     notFound();
   }
+
+  const auto = {
+    id: autoDB.id,
+    marca: autoDB.marca,
+    modelo: autoDB.modelo,
+    anio: autoDB.anio,
+    kmNumero: autoDB.km_numero,
+    km: autoDB.km,
+    condicion: autoDB.condicion,
+    precio: autoDB.precio,
+    precioNumero: autoDB.precio_numero,
+    combustible: autoDB.combustible,
+    transmision: autoDB.transmision,
+    imagen: autoDB.imagen,
+    imagenes: autoDB.imagenes,
+    descripcion: autoDB.descripcion,
+  };
 
   const { data: autosDB } = await supabase
     .from("autos")
     .select("*")
-    .neq("id", Number(id.replace("db-", "")));
+    .neq("id", auto.id);
 
   const autosSimilares = (autosDB || [])
     .map((item) => ({
-      id: `db-${item.id}`,
+      id: item.id,
       marca: item.marca,
       modelo: item.modelo,
       anio: item.anio,
@@ -224,7 +213,7 @@ export default async function AutoDetalle({
             {autosSimilares.map((item) => (
               <Link
                 key={item.id}
-                href={`/autos/${item.id}`}
+                href={`/autos/${getAutoSlug(item)}`}
                 className="group overflow-hidden rounded-3xl border border-white/10 bg-neutral-900 transition hover:-translate-y-2 hover:border-red-500/50"
               >
                 <img

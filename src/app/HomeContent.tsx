@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import { supabase } from "@/lib/supabase";
+import { getAutoSlug } from "@/lib/autos";
 
 export default function HomeContent() { 
   const searchParams = useSearchParams();
@@ -287,7 +288,7 @@ export default function HomeContent() {
               <div className="overflow-hidden">
                 <img
                   src={auto.imagen}
-                  alt={`${auto.marca} ${auto.modelo}`}
+                  alt={`${auto.marca} ${auto.modelo} ${auto.anio} en Córdoba`}
                   className="h-56 w-full object-cover transition duration-500 group-hover:scale-110"
                 />
               </div>
@@ -313,7 +314,7 @@ export default function HomeContent() {
                   <p className="text-xl font-bold">{auto.precio}</p>
 
                   <a
-                    href={`/autos/${auto.id}`}
+                    href={`/autos/${getAutoSlug(auto)}`}
                     className="rounded-full bg-red-600 px-4 py-2 text-sm font-semibold transition hover:bg-red-700"
                   >
                     Ver detalle
