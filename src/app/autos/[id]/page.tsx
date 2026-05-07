@@ -3,6 +3,51 @@ import Navbar from "@/components/Navbar";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+
+  let auto: any = null;
+
+  if (id.startsWith("db-")) {
+    const dbId = Number(id.replace("db-", ""));
+
+    const { data } = await supabase
+      .from("autos")
+      .select("*")
+      .eq("id", dbId)
+      .single();
+
+    if (data) {
+      auto = data;
+    }
+  }
+
+  if (!auto) {
+    return {
+      title: "Auto no encontrado | HM Exclusivos",
+    };
+  }
+
+  const title = `${auto.marca} ${auto.modelo} ${auto.anio} usado en Córdoba | HM Exclusivos`;
+
+  const description = `${auto.marca} ${auto.modelo} ${auto.anio} con ${auto.km} en venta en Córdoba. Consultá financiación y permutas en HM Exclusivos.`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: [auto.imagen],
+    },
+  };
+}
 
 export default async function AutoDetalle({
   params,
@@ -90,7 +135,7 @@ export default async function AutoDetalle({
         <div className="mt-8 grid gap-10 lg:grid-cols-2">
           <AutoGallery
             imagenes={auto.imagenes}
-            alt={`${auto.marca} ${auto.modelo}`}
+            alt={`${auto.marca} ${auto.modelo} ${auto.anio} en Córdoba`}
           />
 
           <div>
@@ -184,7 +229,7 @@ export default async function AutoDetalle({
               >
                 <img
                   src={item.imagen}
-                  alt={`${item.marca} ${item.modelo}`}
+                  alt={`${item.marca} ${item.modelo} ${item.anio} en Córdoba`}
                   className="h-56 w-full object-cover transition duration-500 group-hover:scale-110"
                 />
 
