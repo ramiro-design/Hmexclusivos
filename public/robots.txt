@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://hmexclusivos.com.ar
+
+# Sitemaps
+Sitemap: https://hmexclusivos.com.ar/sitemap.xml
