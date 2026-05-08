@@ -32,9 +32,11 @@ export default function AdminPage() {
   const [imagenesExistentes, setImagenesExistentes] = useState<string[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [imagenPrincipalIndex, setImagenPrincipalIndex] = useState(0);
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
 
   useEffect(() => {
     const urlsNuevas = imagenes.map((imagen) => URL.createObjectURL(imagen));
+
     setPreviewUrls([...imagenesExistentes, ...urlsNuevas]);
 
     return () => {
@@ -65,7 +67,6 @@ export default function AdminPage() {
       .order("created_at", { ascending: false });
 
     if (error) {
-      console.log("ERROR CARGAR AUTOS:", error);
       setMensaje("Error al cargar autos");
       return;
     }
@@ -91,11 +92,13 @@ export default function AdminPage() {
     setImagenesExistentes([]);
     setPreviewUrls([]);
     setImagenPrincipalIndex(0);
+    setDragIndex(null);
     setEditandoId(null);
   };
 
   const seleccionarImagenes = (files: FileList | null) => {
     const nuevasImagenes = Array.from(files || []);
+
     const totalActual = imagenesExistentes.length + imagenes.length;
     const disponibles = MAX_IMAGENES - totalActual;
 
@@ -104,17 +107,25 @@ export default function AdminPage() {
       return;
     }
 
-    setImagenes((prev) => [...prev, ...nuevasImagenes.slice(0, disponibles)]);
+    setImagenes((prev) => [
+      ...prev,
+      ...nuevasImagenes.slice(0, disponibles),
+    ]);
   };
 
   const quitarImagen = (index: number) => {
     const cantidadExistentes = imagenesExistentes.length;
 
     if (index < cantidadExistentes) {
-      setImagenesExistentes((prev) => prev.filter((_, i) => i !== index));
+      setImagenesExistentes((prev) =>
+        prev.filter((_, i) => i !== index)
+      );
     } else {
       const indexNueva = index - cantidadExistentes;
-      setImagenes((prev) => prev.filter((_, i) => i !== indexNueva));
+
+      setImagenes((prev) =>
+        prev.filter((_, i) => i !== indexNueva)
+      );
     }
 
     setImagenPrincipalIndex((prev) => {
@@ -124,10 +135,45 @@ export default function AdminPage() {
     });
   };
 
-  const editarAuto = (auto: any) => {
-    console.log("EDITANDO AUTO COMPLETO:", auto);
-    console.log("ID DEL AUTO A EDITAR:", auto.id, typeof auto.id);
+  const moverImagen = (fromIndex: number, toIndex: number) => {
+    if (fromIndex === toIndex) return;
 
+    const todas = [
+      ...imagenesExistentes.map((url) => ({
+        tipo: "existente" as const,
+        valor: url,
+      })),
+      ...imagenes.map((file) => ({
+        tipo: "nueva" as const,
+        valor: file,
+      })),
+    ];
+
+    const [movida] = todas.splice(fromIndex, 1);
+
+    todas.splice(toIndex, 0, movida);
+
+    setImagenesExistentes(
+      todas
+        .filter((item) => item.tipo === "existente")
+        .map((item) => item.valor as string)
+    );
+
+    setImagenes(
+      todas
+        .filter((item) => item.tipo === "nueva")
+        .map((item) => item.valor as File)
+    );
+
+    setImagenPrincipalIndex((prev) => {
+      if (prev === fromIndex) return toIndex;
+      if (fromIndex < prev && toIndex >= prev) return prev - 1;
+      if (fromIndex > prev && toIndex <= prev) return prev + 1;
+      return prev;
+    });
+  };
+
+  const editarAuto = (auto: any) => {
     const imagenesAuto =
       Array.isArray(auto.imagenes) && auto.imagenes.length > 0
         ? auto.imagenes
@@ -148,7 +194,7 @@ export default function AdminPage() {
       km: String(auto.km_numero || ""),
       condicion: auto.condicion || "Usado",
       precio: String(auto.precio_numero || ""),
-      moneda: auto.moneda || (auto.precio?.includes("$") ? "ARS" : "USD"),
+      moneda: auto.moneda || "USD",
       combustible: auto.combustible || "Nafta",
       transmision: auto.transmision || "Automática",
       descripcion: auto.descripcion || "",
@@ -157,19 +203,18 @@ export default function AdminPage() {
     setImagenes([]);
     setImagenesExistentes(imagenesAuto);
     setImagenPrincipalIndex(principalIndex >= 0 ? principalIndex : 0);
+
     setMensaje("Editando vehículo.");
-    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   };
 
   const guardarAuto = async () => {
-  try {
-    console.log("CLICK GUARDAR / ACTUALIZAR");
-    console.log("EDITANDO ID ACTUAL:", editandoId, typeof editandoId);
-    console.log("FORM ACTUAL:", form);
-    console.log("IMAGENES NUEVAS:", imagenes);
-    console.log("IMAGENES EXISTENTES:", imagenesExistentes);
-
-    setMensaje("");
+    try {
+      setMensaje("");
 
       if (
         !form.marca ||
@@ -178,11 +223,16 @@ export default function AdminPage() {
         !form.km ||
         !form.precio
       ) {
-        setMensaje("Completá marca, modelo, año, kilómetros y precio.");
+        setMensaje(
+          "Completá marca, modelo, año, kilómetros y precio."
+        );
         return;
       }
 
-      if (imagenes.length === 0 && imagenesExistentes.length === 0) {
+      if (
+        imagenes.length === 0 &&
+        imagenesExistentes.length === 0
+      ) {
         setMensaje("Subí al menos una foto.");
         return;
       }
@@ -200,22 +250,21 @@ export default function AdminPage() {
 
         if (uploadError) throw uploadError;
 
-        const { data } = supabase.storage.from("autos").getPublicUrl(filePath);
+        const { data } =
+          supabase.storage.from("autos").getPublicUrl(filePath);
+
         urlsImagenesNuevas.push(data.publicUrl);
       }
 
-      const todasLasImagenes = [...imagenesExistentes, ...urlsImagenesNuevas];
+      const todasLasImagenes = [
+        ...imagenesExistentes,
+        ...urlsImagenesNuevas,
+      ];
 
       const imagenPrincipal =
         todasLasImagenes[imagenPrincipalIndex] ||
         todasLasImagenes[0] ||
         "";
-
-      if (!imagenPrincipal) {
-        setMensaje("Seleccioná una imagen principal.");
-        setLoading(false);
-        return;
-      }
 
       const precioFormateado =
         form.moneda === "USD"
@@ -239,8 +288,6 @@ export default function AdminPage() {
         imagenes: todasLasImagenes,
       };
 
-      console.log("PAYLOAD A GUARDAR:", payload);
-
       let resultado;
 
       if (editandoId) {
@@ -250,18 +297,13 @@ export default function AdminPage() {
           .eq("id", editandoId)
           .select();
       } else {
-        resultado = await supabase.from("autos").insert(payload).select();
+        resultado = await supabase
+          .from("autos")
+          .insert(payload)
+          .select();
       }
-
-      console.log("RESULTADO SUPABASE:", resultado);
 
       if (resultado.error) throw resultado.error;
-
-      if (editandoId && (!resultado.data || resultado.data.length === 0)) {
-        setMensaje("No se actualizó ningún auto. El ID no está coincidiendo.");
-        setLoading(false);
-        return;
-      }
 
       setMensaje(
         editandoId
@@ -272,13 +314,8 @@ export default function AdminPage() {
       resetForm();
       await cargarAutos();
     } catch (error: any) {
-      console.log("ERROR COMPLETO:", error);
-
       setMensaje(
         error?.message ||
-          error?.details ||
-          error?.hint ||
-          JSON.stringify(error) ||
           "Hubo un error al guardar el vehículo."
       );
     } finally {
@@ -288,12 +325,15 @@ export default function AdminPage() {
 
   const eliminarAuto = async (id: string | number) => {
     const confirmar = confirm("¿Eliminar este auto?");
+
     if (!confirmar) return;
 
-    const { error } = await supabase.from("autos").delete().eq("id", id);
+    const { error } = await supabase
+      .from("autos")
+      .delete()
+      .eq("id", id);
 
     if (error) {
-      console.log("ERROR ELIMINAR:", error);
       setMensaje("Error al eliminar el auto.");
       return;
     }
@@ -329,7 +369,9 @@ export default function AdminPage() {
               Administración
             </p>
 
-            <h1 className="text-4xl font-bold">Panel Admin</h1>
+            <h1 className="text-4xl font-bold">
+              Panel Admin
+            </h1>
 
             <p className="mt-2 text-neutral-400">
               Cargá, editá y administrá vehículos.
@@ -354,7 +396,9 @@ export default function AdminPage() {
         <div className="mt-8 grid gap-4 rounded-3xl border border-white/10 bg-neutral-900 p-6">
           <div className="flex items-center justify-between gap-4">
             <h2 className="text-2xl font-bold">
-              {editandoId ? "Editar vehículo" : "Nuevo vehículo"}
+              {editandoId
+                ? "Editar vehículo"
+                : "Nuevo vehículo"}
             </h2>
 
             {editandoId && (
@@ -380,23 +424,43 @@ export default function AdminPage() {
                 key={key}
                 placeholder={label}
                 value={(form as any)[key]}
-                onChange={(e) => setForm({ ...form, [key]: e.target.value })}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    [key]: e.target.value,
+                  })
+                }
                 className="rounded-xl border border-white/10 bg-black px-4 py-3 outline-none focus:border-red-500"
               />
             ))}
 
             <select
               value={form.moneda}
-              onChange={(e) => setForm({ ...form, moneda: e.target.value })}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  moneda: e.target.value,
+                })
+              }
               className="rounded-xl border border-white/10 bg-black px-4 py-3"
             >
-              <option value="USD">US$ Dólares</option>
-              <option value="ARS">$ Pesos Argentinos</option>
+              <option value="USD">
+                US$ Dólares
+              </option>
+
+              <option value="ARS">
+                $ Pesos Argentinos
+              </option>
             </select>
 
             <select
               value={form.condicion}
-              onChange={(e) => setForm({ ...form, condicion: e.target.value })}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  condicion: e.target.value,
+                })
+              }
               className="rounded-xl border border-white/10 bg-black px-4 py-3"
             >
               <option>Usado</option>
@@ -406,7 +470,10 @@ export default function AdminPage() {
             <select
               value={form.combustible}
               onChange={(e) =>
-                setForm({ ...form, combustible: e.target.value })
+                setForm({
+                  ...form,
+                  combustible: e.target.value,
+                })
               }
               className="rounded-xl border border-white/10 bg-black px-4 py-3"
             >
@@ -419,7 +486,10 @@ export default function AdminPage() {
             <select
               value={form.transmision}
               onChange={(e) =>
-                setForm({ ...form, transmision: e.target.value })
+                setForm({
+                  ...form,
+                  transmision: e.target.value,
+                })
               }
               className="rounded-xl border border-white/10 bg-black px-4 py-3"
             >
@@ -431,23 +501,32 @@ export default function AdminPage() {
           <textarea
             placeholder="Descripción"
             value={form.descripcion}
-            onChange={(e) => setForm({ ...form, descripcion: e.target.value })}
+            onChange={(e) =>
+              setForm({
+                ...form,
+                descripcion: e.target.value,
+              })
+            }
             className="min-h-32 rounded-xl border border-white/10 bg-black px-4 py-3 outline-none focus:border-red-500"
           />
 
           <div className="rounded-2xl border border-dashed border-white/20 bg-black p-5">
-            <p className="mb-3 font-semibold">Fotos del vehículo</p>
+            <p className="mb-3 font-semibold">
+              Fotos del vehículo
+            </p>
 
             <p className="mb-4 text-sm text-neutral-400">
-              Podés subir hasta {MAX_IMAGENES} imágenes. Tocá una imagen para
-              marcarla como principal.
+              Podés subir hasta {MAX_IMAGENES} imágenes.
+              Arrastralas para cambiar el orden.
             </p>
 
             <input
               type="file"
               accept="image/*"
               multiple
-              onChange={(e) => seleccionarImagenes(e.target.files)}
+              onChange={(e) =>
+                seleccionarImagenes(e.target.files)
+              }
               className="w-full rounded-xl border border-white/10 bg-neutral-950 px-4 py-3"
             />
 
@@ -456,34 +535,53 @@ export default function AdminPage() {
                 {previewUrls.map((url, index) => (
                   <div
                     key={`${url}-${index}`}
-                    className={`relative overflow-hidden rounded-2xl border bg-neutral-900 ${
+                    draggable
+                    onDragStart={() =>
+                      setDragIndex(index)
+                    }
+                    onDragOver={(e) =>
+                      e.preventDefault()
+                    }
+                    onDrop={() => {
+                      if (dragIndex !== null) {
+                        moverImagen(
+                          dragIndex,
+                          index
+                        );
+
+                        setDragIndex(null);
+                      }
+                    }}
+                    onDragEnd={() =>
+                      setDragIndex(null)
+                    }
+                    className={`relative cursor-grab overflow-hidden rounded-2xl border bg-neutral-900 active:cursor-grabbing ${
                       imagenPrincipalIndex === index
                         ? "border-red-500"
                         : "border-white/10"
                     }`}
                   >
-                    <button
-                      type="button"
-                      onClick={() => setImagenPrincipalIndex(index)}
-                      className="block w-full"
-                    >
-                      <img
-                        src={url}
-                        alt={`Preview ${index + 1}`}
-                        className="h-36 w-full object-cover"
-                      />
-                    </button>
+                    <img
+                      src={url}
+                      alt={`Preview ${index + 1}`}
+                      className="h-36 w-full object-cover"
+                    />
 
-                    <div className="absolute left-3 right-3 top-3 flex items-center justify-between gap-2">
-                      {imagenPrincipalIndex === index ? (
+                    <div className="absolute left-3 right-3 top-3 flex items-center justify-between">
+                      {imagenPrincipalIndex ===
+                      index ? (
                         <span className="rounded-full bg-red-600 px-3 py-1 text-xs font-bold">
                           Principal
                         </span>
                       ) : (
                         <button
                           type="button"
-                          onClick={() => setImagenPrincipalIndex(index)}
-                          className="rounded-full bg-black/80 px-3 py-1 text-xs font-bold transition hover:bg-red-600"
+                          onClick={() =>
+                            setImagenPrincipalIndex(
+                              index
+                            )
+                          }
+                          className="rounded-full bg-black/80 px-3 py-1 text-xs font-bold hover:bg-red-600"
                         >
                           Hacer principal
                         </button>
@@ -491,11 +589,17 @@ export default function AdminPage() {
 
                       <button
                         type="button"
-                        onClick={() => quitarImagen(index)}
-                        className="rounded-full bg-black/80 px-3 py-1 text-xs font-bold transition hover:bg-red-600"
+                        onClick={() =>
+                          quitarImagen(index)
+                        }
+                        className="rounded-full bg-black/80 px-3 py-1 text-xs font-bold hover:bg-red-600"
                       >
                         Quitar
                       </button>
+                    </div>
+
+                    <div className="absolute bottom-3 right-3 rounded-full bg-black/80 px-3 py-1 text-xs font-bold">
+                      #{index + 1}
                     </div>
                   </div>
                 ))}
@@ -507,7 +611,7 @@ export default function AdminPage() {
             type="button"
             onClick={guardarAuto}
             disabled={loading}
-            className="rounded-full bg-red-600 px-6 py-4 font-bold transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+            className="rounded-full bg-red-600 px-6 py-4 font-bold transition hover:bg-red-700 disabled:opacity-60"
           >
             {loading
               ? editandoId
@@ -520,7 +624,9 @@ export default function AdminPage() {
         </div>
 
         <div className="mt-12">
-          <h2 className="mb-4 text-2xl font-bold">Autos cargados</h2>
+          <h2 className="mb-4 text-2xl font-bold">
+            Autos cargados
+          </h2>
 
           <div className="grid gap-4">
             {autos.map((auto) => (
@@ -541,7 +647,8 @@ export default function AdminPage() {
                     </p>
 
                     <p className="text-sm text-neutral-400">
-                      {auto.anio} · {auto.km} · {auto.precio}
+                      {auto.anio} · {auto.km} ·{" "}
+                      {auto.precio}
                     </p>
                   </div>
                 </div>
@@ -549,7 +656,9 @@ export default function AdminPage() {
                 <div className="flex gap-2">
                   <button
                     type="button"
-                    onClick={() => editarAuto(auto)}
+                    onClick={() =>
+                      editarAuto(auto)
+                    }
                     className="rounded-full border border-white/20 px-4 py-2 text-sm hover:bg-white hover:text-black"
                   >
                     Editar
@@ -557,7 +666,9 @@ export default function AdminPage() {
 
                   <button
                     type="button"
-                    onClick={() => eliminarAuto(auto.id)}
+                    onClick={() =>
+                      eliminarAuto(auto.id)
+                    }
                     className="rounded-full bg-red-600 px-4 py-2 text-sm hover:bg-red-700"
                   >
                     Eliminar
