@@ -17,7 +17,7 @@ export default function HomeContent() {
       const { data, error } = await supabase
         .from("autos")
         .select("*")
-        .order("created_at", { ascending: false });
+        .order("precio_numero", { ascending: false });
 
       if (!error && data) {
         const autosFormateados = data.map((auto) => ({
@@ -25,11 +25,14 @@ export default function HomeContent() {
           marca: auto.marca,
           modelo: auto.modelo,
           anio: auto.anio,
-          kmNumero: auto.km_numero,
+          kmNumero: auto.km_numero ?? 0,
           km: auto.km,
           condicion: auto.condicion,
           precio: auto.precio,
-          precioNumero: auto.precio_numero,
+          precioNumero:
+  auto.moneda === "USD"
+    ? (auto.precio_numero ?? 0) * 1500
+    : auto.precio_numero ?? 0,
           combustible: auto.combustible,
           transmision: auto.transmision,
           imagen: auto.imagen,
@@ -54,7 +57,7 @@ export default function HomeContent() {
   const condicion = searchParams.get("condicion") || "Todas";
   const kmMax = Number(searchParams.get("kmMax") || 999999);
   const anioMin = Number(searchParams.get("anioMin") || 0);
-  const orden = searchParams.get("orden") || "default";
+  const orden = searchParams.get("orden") || "precio-desc";
 
   const autosFiltrados = todosLosAutos.filter((auto) => {
     const coincideBusqueda = `${auto.marca} ${auto.modelo}`
@@ -72,9 +75,11 @@ export default function HomeContent() {
   });
 
   const autosOrdenados = [...autosFiltrados].sort((a, b) => {
-    if (orden === "precio-asc") return a.precioNumero - b.precioNumero;
-    if (orden === "precio-desc") return b.precioNumero - a.precioNumero;
-    return 0;
+    if (orden === "precio-asc") {
+      return Number(a.precioNumero || 0) - Number(b.precioNumero || 0);
+    }
+
+    return Number(b.precioNumero || 0) - Number(a.precioNumero || 0);
   });
 
   const actualizarFiltro = (key: string, value: string) => {
@@ -85,14 +90,15 @@ export default function HomeContent() {
       value === "Todos" ||
       value === "0" ||
       value === "999999" ||
-      value === "default"
+      value === "precio-desc"
     ) {
       params.delete(key);
     } else {
       params.set(key, value);
     }
 
-    window.history.pushState(null, "", `/?${params.toString()}#autos`);
+    const queryString = params.toString();
+    window.history.pushState(null, "", queryString ? `/?${queryString}#autos` : "/#autos");
   };
 
   const limpiarFiltros = () => {
@@ -272,9 +278,8 @@ export default function HomeContent() {
                   onChange={(e) => actualizarFiltro("orden", e.target.value)}
                   className={filtroSelect}
                 >
-                  <option value="default">Ordenar por precio</option>
-                  <option value="precio-asc">Precio: menor a mayor</option>
                   <option value="precio-desc">Precio: mayor a menor</option>
+                  <option value="precio-asc">Precio: menor a mayor</option>
                 </select>
               </div>
             </div>
@@ -395,7 +400,7 @@ export default function HomeContent() {
               <h3 className="text-2xl font-bold">Consultar ahora</h3>
 
               <p className="mt-4 text-neutral-400">
-                Respuesta rápida para stock, precios, financiación y permutas.
+                Respuesta rápida para stock, precios y permutas.
               </p>
             </a>
 
