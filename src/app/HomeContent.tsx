@@ -311,7 +311,7 @@ export default function HomeContent() {
                 key={`${auto.id}`}
                 className="group overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.035] shadow-2xl shadow-black/30 transition duration-300 hover:-translate-y-1 hover:border-white/20"
               >
-                <div className="relative h-[340px] overflow-hidden">
+                <div className="relative h-[300px] overflow-hidden">
                   <img
                     src={auto.imagen}
                     alt={`${auto.marca} ${auto.modelo} ${auto.anio} en Córdoba`}
@@ -331,29 +331,61 @@ export default function HomeContent() {
                   </div>
                 </div>
 
-                <div className="p-6">
-                  <h3 className="text-2xl font-bold tracking-tight text-white">
-                    {auto.marca} {auto.modelo}
-                  </h3>
+                <div className="p-5">
+                  <div className="flex h-full flex-col justify-between space-y-3">
+  <div>
+    <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.28em] text-[#6f85a3]">
+      {auto.marca}
+    </p>
 
-                  <p className="mt-3 text-sm text-neutral-400">
-                    {auto.km}
-                    {auto.transmision ? ` • ${auto.transmision}` : ""}
-                    {auto.combustible ? ` • ${auto.combustible}` : ""}
-                  </p>
+    <h3 className="min-h-[56px] text-[1.8rem] font-semibold leading-[1.02] tracking-tight text-white">
+  {auto.modelo}
+</h3>
+  </div>
 
-                  <div className="mt-7 flex items-end justify-between gap-4">
-                    <p className="text-2xl font-bold text-white">
-                      {auto.precio}
-                    </p>
+  <div className="flex flex-wrap items-center gap-2 text-[13px] text-neutral-400">
+    <span>{auto.anio}</span>
 
-                    <a
-                      href={`/autos/${getAutoSlug(auto)}`}
-                      className="text-sm font-semibold text-[#4f6fe8] transition hover:text-white"
-                    >
-                      Ver detalle →
-                    </a>
-                  </div>
+    <span className="h-1 w-1 rounded-full bg-white/20" />
+
+    <span>{auto.km}</span>
+
+    {auto.transmision && (
+      <>
+        <span className="h-1 w-1 rounded-full bg-white/20" />
+        <span>{auto.transmision}</span>
+      </>
+    )}
+
+    {auto.combustible && (
+      <>
+        <span className="h-1 w-1 rounded-full bg-white/20" />
+        <span>{auto.combustible}</span>
+      </>
+    )}
+  </div>
+
+<div className="mt-auto pt-2">
+  <p className="text-[11px] uppercase tracking-[0.25em] text-neutral-500">
+    Precio
+  </p>
+
+ <p className="mt-1 whitespace-nowrap text-[26px] font-semibold tracking-tight text-[#6f85e8]">
+  {auto.precio}
+</p>
+</div>
+
+<a
+  href={`/autos/${getAutoSlug(auto)}`}
+  className="relative mt-4 flex h-10 w-full items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] text-[12px] font-semibold uppercase tracking-[0.22em] text-[#7b92b8] transition hover:border-[#4f6fe8]/40 hover:bg-[#4f6fe8]/10 hover:text-white"
+>
+  <span>Ver detalle</span>
+
+  <span className="absolute right-5 text-lg">
+    →
+  </span>
+</a>
+</div>
                 </div>
               </div>
             ))}
