@@ -37,6 +37,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!auto) {
     return {
       title: "Auto no encontrado | HM Exclusivos",
+      robots: {
+        index: false,
+        follow: false,
+      },
     };
   }
 
@@ -47,10 +51,24 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title,
     description,
+
+    alternates: {
+      canonical: `https://hmexclusivos.com.ar/autos/${slug}`,
+    },
+
     openGraph: {
       title,
       description,
-      images: [auto.imagen],
+      url: `https://hmexclusivos.com.ar/autos/${slug}`,
+      siteName: "HM Exclusivos",
+      images: [
+        {
+          url: auto.imagen,
+          alt: `${auto.marca} ${auto.modelo} ${auto.anio} en Córdoba`,
+        },
+      ],
+      locale: "es_AR",
+      type: "website",
     },
   };
 }
@@ -183,17 +201,17 @@ export default async function AutoDetalle({ params }: Props) {
               </div>
 
               <h1 className="text-4xl font-semibold tracking-tight text-[#8fb1da] sm:text-5xl">
-  {auto.marca}{" "}
-  <span className="text-[#8fb1da]">{auto.modelo}</span>
-</h1>
+                {auto.marca}{" "}
+                <span className="text-[#8fb1da]">{auto.modelo}</span>
+              </h1>
 
-<p className="mt-5 text-3xl font-semibold text-white">
-  {auto.precio}
-</p>
+              <p className="mt-5 text-3xl font-semibold text-white">
+                {auto.precio}
+              </p>
 
-           <p className="mt-6 border-l-2 border-[#284973] pl-4 text-lg leading-relaxed text-white/80">
-  {auto.descripcion}
-</p>
+              <p className="mt-6 border-l-2 border-[#284973] pl-4 text-lg leading-relaxed text-white/80">
+                {auto.descripcion}
+              </p>
 
               <div className="mt-8 grid grid-cols-2 gap-3">
                 <Info label="Kilómetros" value={auto.km} />
