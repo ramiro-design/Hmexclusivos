@@ -486,31 +486,49 @@ export default function HomeContent() {
                 </p>
 
                 <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/5">
-                  <svg
-                    viewBox="0 0 24 24"
-                    className="h-5 w-5 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <rect
-                      x="3"
-                      y="3"
-                      width="18"
-                      height="18"
-                      rx="5"
-                    />
-                    <circle cx="12" cy="12" r="4" />
-                    <circle
-                      cx="17.5"
-                      cy="6.5"
-                      r="0.8"
-                      fill="currentColor"
-                      stroke="none"
-                    />
-                  </svg>
+                 <svg
+  viewBox="0 0 24 24"
+  className="h-5 w-5"
+  fill="none"
+  stroke="url(#instagramGradient)"
+  strokeWidth="1.8"
+  strokeLinecap="round"
+  strokeLinejoin="round"
+>
+  <defs>
+    <linearGradient
+      id="instagramGradient"
+      x1="0%"
+      y1="100%"
+      x2="100%"
+      y2="0%"
+    >
+      <stop offset="0%" stopColor="#feda75" />
+      <stop offset="25%" stopColor="#fa7e1e" />
+      <stop offset="50%" stopColor="#d62976" />
+      <stop offset="75%" stopColor="#962fbf" />
+      <stop offset="100%" stopColor="#4f5bd5" />
+    </linearGradient>
+  </defs>
+
+  <rect
+    x="3"
+    y="3"
+    width="18"
+    height="18"
+    rx="5"
+  />
+
+  <circle cx="12" cy="12" r="4" />
+
+  <circle
+    cx="17.5"
+    cy="6.5"
+    r="0.8"
+    fill="#fff"
+    stroke="none"
+  />
+</svg>
                 </div>
               </div>
 
