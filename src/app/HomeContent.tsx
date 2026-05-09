@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import { supabase } from "@/lib/supabase";
 import { getAutoSlug } from "@/lib/autos";
+import { MapPin, MessageCircle } from "lucide-react";
 
 export default function HomeContent() {
   const searchParams = useSearchParams();
@@ -426,7 +427,7 @@ export default function HomeContent() {
         </div>
       </section>
 
-      {/* CONTACTO */}
+             {/* CONTACTO */}
       <section
         id="contacto"
         className="stock-section-bg border-t border-white/10 px-6 py-24"
@@ -447,49 +448,100 @@ export default function HomeContent() {
             </p>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-3">
+                    <div className="grid gap-6 md:grid-cols-3">
+            {/* WHATSAPP */}
             <a
               href="https://wa.me/5493572538383"
               target="_blank"
-              className="premium-card rounded-3xl p-8 transition hover:-translate-y-1"
+              className="premium-card rounded-3xl p-8 transition duration-300 hover:-translate-y-1 hover:border-[#284973]"
             >
-              <p className="mb-3 text-sm uppercase tracking-[0.25em] text-[#4f6fe8]">
-                WhatsApp
-              </p>
+              <div className="mb-4 flex items-center justify-between">
+                <p className="text-sm uppercase tracking-[0.25em] text-[#4f6fe8]">
+                  WhatsApp
+                </p>
 
-              <h3 className="text-2xl font-bold">Consultar ahora</h3>
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-green-500/20 bg-green-500/10">
+                  <MessageCircle className="h-5 w-5 text-green-400" />
+                </div>
+              </div>
+
+              <h3 className="text-2xl font-bold">
+                Consultar ahora
+              </h3>
 
               <p className="mt-4 text-neutral-400">
                 Respuesta rápida para stock, precios y permutas.
               </p>
             </a>
 
+            {/* INSTAGRAM */}
             <a
               href="https://www.instagram.com/hmexclusivos"
               target="_blank"
-              className="premium-card rounded-3xl p-8 transition hover:-translate-y-1"
+              className="premium-card rounded-3xl p-8 transition duration-300 hover:-translate-y-1 hover:border-[#284973]"
             >
-              <p className="mb-3 text-sm uppercase tracking-[0.25em] text-[#4f6fe8]">
-                Instagram
-              </p>
+              <div className="mb-4 flex items-center justify-between">
+                <p className="text-sm uppercase tracking-[0.25em] text-[#4f6fe8]">
+                  Instagram
+                </p>
 
-              <h3 className="text-2xl font-bold">@hmexclusivos</h3>
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/5">
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="h-5 w-5 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <rect
+                      x="3"
+                      y="3"
+                      width="18"
+                      height="18"
+                      rx="5"
+                    />
+                    <circle cx="12" cy="12" r="4" />
+                    <circle
+                      cx="17.5"
+                      cy="6.5"
+                      r="0.8"
+                      fill="currentColor"
+                      stroke="none"
+                    />
+                  </svg>
+                </div>
+              </div>
+
+              <h3 className="text-2xl font-bold">
+                @hmexclusivos
+              </h3>
 
               <p className="mt-4 text-neutral-400">
                 Seguinos para ver ingresos, novedades y vehículos destacados.
               </p>
             </a>
 
+            {/* UBICACION */}
             <a
               href="https://maps.google.com"
               target="_blank"
-              className="premium-card rounded-3xl p-8 transition hover:-translate-y-1"
+              className="premium-card rounded-3xl p-8 transition duration-300 hover:-translate-y-1 hover:border-[#284973]"
             >
-              <p className="mb-3 text-sm uppercase tracking-[0.25em] text-[#4f6fe8]">
-                Ubicación
-              </p>
+              <div className="mb-4 flex items-center justify-between">
+                <p className="text-sm uppercase tracking-[0.25em] text-[#4f6fe8]">
+                  Ubicación
+                </p>
 
-              <h3 className="text-2xl font-bold">Córdoba, Argentina</h3>
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-[#284973]/30 bg-[#284973]/20">
+                  <MapPin className="h-5 w-5 text-[#6f8fbd]" />
+                </div>
+              </div>
+
+              <h3 className="text-2xl font-bold">
+                Córdoba, Argentina
+              </h3>
 
               <p className="mt-4 text-neutral-400">
                 Coordiná una visita para conocer la unidad personalmente.
