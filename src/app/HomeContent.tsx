@@ -11,6 +11,7 @@ export default function HomeContent() {
 
   const [autosDB, setAutosDB] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [visibleAutos, setVisibleAutos] = useState(12);
 
   useEffect(() => {
     const fetchAutos = async () => {
@@ -30,9 +31,9 @@ export default function HomeContent() {
           condicion: auto.condicion,
           precio: auto.precio,
           precioNumero:
-  auto.moneda === "USD"
-    ? (auto.precio_numero ?? 0) * 1500
-    : auto.precio_numero ?? 0,
+            auto.moneda === "USD"
+              ? (auto.precio_numero ?? 0) * 1500
+              : auto.precio_numero ?? 0,
           combustible: auto.combustible,
           transmision: auto.transmision,
           imagen: auto.imagen,
@@ -83,6 +84,8 @@ export default function HomeContent() {
   });
 
   const actualizarFiltro = (key: string, value: string) => {
+    setVisibleAutos(12);
+
     const params = new URLSearchParams(searchParams.toString());
 
     if (
@@ -98,15 +101,23 @@ export default function HomeContent() {
     }
 
     const queryString = params.toString();
-    window.history.pushState(null, "", queryString ? `/?${queryString}#autos` : "/#autos");
+    window.history.pushState(
+      null,
+      "",
+      queryString ? `/?${queryString}#autos` : "/#autos"
+    );
   };
 
   const limpiarFiltros = () => {
+    setVisibleAutos(12);
     window.location.href = "/#autos";
   };
 
   const marcas = ["Todas", ...new Set(todosLosAutos.map((auto) => auto.marca))];
-  const modelos = ["Todos", ...new Set(todosLosAutos.map((auto) => auto.modelo))];
+  const modelos = [
+    "Todos",
+    ...new Set(todosLosAutos.map((auto) => auto.modelo)),
+  ];
 
   const filtroBox =
     "h-[88px] rounded-2xl border border-white/15 bg-black/25 px-5 py-4 text-left shadow-inner shadow-white/5 transition hover:border-white/25";
@@ -132,7 +143,8 @@ export default function HomeContent() {
           </h1>
 
           <p className="hero-subtitle">
-            Unidades premium seleccionadas bajo estándares de calidad, estética y confianza.
+            Unidades premium seleccionadas bajo estándares de calidad, estética
+            y confianza.
           </p>
 
           <div className="hero-buttons">
@@ -157,28 +169,32 @@ export default function HomeContent() {
           </h2>
 
           <p className="premium-info-subtitle">
-            Vehículos seleccionados, atención personalizada y un proceso pensado para que encuentres el auto ideal.
+            Vehículos seleccionados, atención personalizada y un proceso pensado
+            para que encuentres el auto ideal.
           </p>
 
           <div className="premium-info-grid">
             <div className="premium-info-card">
               <h3>Usados seleccionados</h3>
               <p>
-                Cada unidad se revisa antes de ser publicada para ofrecer autos en excelente estado.
+                Cada unidad se revisa antes de ser publicada para ofrecer autos
+                en excelente estado.
               </p>
             </div>
 
             <div className="premium-info-card">
               <h3>Atención personalizada</h3>
               <p>
-                Te acompañamos durante todo el proceso para que encuentres el vehículo ideal de forma simple y transparente.
+                Te acompañamos durante todo el proceso para que encuentres el
+                vehículo ideal de forma simple y transparente.
               </p>
             </div>
 
             <div className="premium-info-card">
               <h3>Tomamos permutas</h3>
               <p>
-                Podés entregar tu vehículo como parte de pago y simplificar la operación.
+                Podés entregar tu vehículo como parte de pago y simplificar la
+                operación.
               </p>
             </div>
           </div>
@@ -232,7 +248,9 @@ export default function HomeContent() {
                 <span className={filtroLabel}>Condición</span>
                 <select
                   value={condicion}
-                  onChange={(e) => actualizarFiltro("condicion", e.target.value)}
+                  onChange={(e) =>
+                    actualizarFiltro("condicion", e.target.value)
+                  }
                   className={filtroSelect}
                 >
                   <option>Todas</option>
@@ -306,7 +324,7 @@ export default function HomeContent() {
 
           {/* CARDS PREMIUM */}
           <div className="grid gap-6 xl:grid-cols-3 md:grid-cols-2">
-            {autosOrdenados.map((auto) => (
+            {autosOrdenados.slice(0, visibleAutos).map((auto) => (
               <div
                 key={`${auto.id}`}
                 className="group overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.035] shadow-2xl shadow-black/30 transition duration-300 hover:-translate-y-1 hover:border-white/20"
@@ -333,63 +351,72 @@ export default function HomeContent() {
 
                 <div className="p-5">
                   <div className="flex h-full flex-col justify-between space-y-3">
-  <div>
-    <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.28em] text-[#6f85a3]">
-      {auto.marca}
-    </p>
+                    <div>
+                      <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.28em] text-[#6f85a3]">
+                        {auto.marca}
+                      </p>
 
-    <h3 className="min-h-[56px] text-[1.8rem] font-semibold leading-[1.02] tracking-tight text-white">
-  {auto.modelo}
-</h3>
-  </div>
+                      <h3 className="min-h-[56px] text-[1.8rem] font-semibold leading-[1.02] tracking-tight text-white">
+                        {auto.modelo}
+                      </h3>
+                    </div>
 
-  <div className="flex flex-wrap items-center gap-2 text-[13px] text-neutral-400">
-    <span>{auto.anio}</span>
+                    <div className="flex flex-wrap items-center gap-2 text-[13px] text-neutral-400">
+                      <span>{auto.anio}</span>
 
-    <span className="h-1 w-1 rounded-full bg-white/20" />
+                      <span className="h-1 w-1 rounded-full bg-white/20" />
 
-    <span>{auto.km}</span>
+                      <span>{auto.km}</span>
 
-    {auto.transmision && (
-      <>
-        <span className="h-1 w-1 rounded-full bg-white/20" />
-        <span>{auto.transmision}</span>
-      </>
-    )}
+                      {auto.transmision && (
+                        <>
+                          <span className="h-1 w-1 rounded-full bg-white/20" />
+                          <span>{auto.transmision}</span>
+                        </>
+                      )}
 
-    {auto.combustible && (
-      <>
-        <span className="h-1 w-1 rounded-full bg-white/20" />
-        <span>{auto.combustible}</span>
-      </>
-    )}
-  </div>
+                      {auto.combustible && (
+                        <>
+                          <span className="h-1 w-1 rounded-full bg-white/20" />
+                          <span>{auto.combustible}</span>
+                        </>
+                      )}
+                    </div>
 
-<div className="mt-auto pt-2">
-  <p className="text-[11px] uppercase tracking-[0.25em] text-neutral-500">
-    Precio
-  </p>
+                    <div className="mt-auto pt-2">
+                      <p className="text-[11px] uppercase tracking-[0.25em] text-neutral-500">
+                        Precio
+                      </p>
 
- <p className="mt-1 whitespace-nowrap text-[26px] font-semibold tracking-tight text-[#6f85e8]">
-  {auto.precio}
-</p>
-</div>
+                      <p className="mt-1 whitespace-nowrap text-[26px] font-semibold tracking-tight text-[#6f85e8]">
+                        {auto.precio}
+                      </p>
+                    </div>
 
-<a
-  href={`/autos/${getAutoSlug(auto)}`}
-  className="relative mt-4 flex h-10 w-full items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] text-[12px] font-semibold uppercase tracking-[0.22em] text-[#7b92b8] transition hover:border-[#4f6fe8]/40 hover:bg-[#4f6fe8]/10 hover:text-white"
->
-  <span>Ver detalle</span>
+                    <a
+                      href={`/autos/${getAutoSlug(auto)}`}
+                      className="relative mt-4 flex h-10 w-full items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] text-[12px] font-semibold uppercase tracking-[0.22em] text-[#7b92b8] transition hover:border-[#4f6fe8]/40 hover:bg-[#4f6fe8]/10 hover:text-white"
+                    >
+                      <span>Ver detalle</span>
 
-  <span className="absolute right-5 text-lg">
-    →
-  </span>
-</a>
-</div>
+                      <span className="absolute right-5 text-lg">→</span>
+                    </a>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
+
+          {visibleAutos < autosOrdenados.length && (
+            <div className="mt-12 flex justify-center">
+              <button
+                onClick={() => setVisibleAutos((prev) => prev + 12)}
+                className="rounded-2xl border border-white/10 bg-[#1f3557] px-8 py-4 text-sm font-semibold uppercase tracking-[0.22em] text-white transition hover:bg-[#284973]"
+              >
+                Ver más autos
+              </button>
+            </div>
+          )}
 
           {!loading && autosOrdenados.length === 0 && (
             <p className="mt-10 text-center text-neutral-400">
@@ -415,7 +442,8 @@ export default function HomeContent() {
             </h2>
 
             <p className="mx-auto mt-4 max-w-2xl text-neutral-400">
-              Escribinos y te asesoramos para encontrar la mejor opción según lo que estás buscando.
+              Escribinos y te asesoramos para encontrar la mejor opción según
+              lo que estás buscando.
             </p>
           </div>
 
